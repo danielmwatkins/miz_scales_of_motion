@@ -13,7 +13,7 @@ be re-generated without additional computation time. This also lets us make mino
 
 # python environment
 List the key libraries here. In the final version, we'll attempt to make a yml file that allows users to recreate the correct Conda or 
-micromamba environment.
+micromamba environment.  
 `proplot`  
 `xarray`  
 `pandas`  
@@ -27,8 +27,8 @@ compiles floe properties and rotation rates.
 `03_add_nsidc_info_ift.py` Interpolates NSIDC ice motion and climate data record sea ice concentration to floe locations, and calculates the 
 distance to the sea ice edge. TBD: add ERA5 wind data as well. Requires external datasets.
 `04_finding_polygons.py` Searches all possible combinations of three sea ice floes, and makes a list of all the combinations with minimum 
-interior angle greater than 20 degrees. The polygon data is large - 1.15 GB - so needs to be created locally rather than shared on github.
-`05_calculate_deformation.py` Calculates strain rates.
+interior angle greater than 20 degrees. The polygon data is large - 1.15 GB - so needs to be created locally rather than shared on github.  
+`05_calculate_deformation.py` Calculates strain rates.  
 
 
 # data
@@ -40,6 +40,5 @@ produced by script 1.
 Figures should be print-ready for Annals of Glaciology. They should be eps, tif, or pdf if possible. (Some figures need to be compressed into 
 jpg first and then converted, such as scatterplots with huge numbers of points). The figure width should be 86 mm for single column figures 
 and 178 mm for two-column figures. Fontsize should be 9. Font should be Optima, or if that is not available, Arial. 
-
 
 
