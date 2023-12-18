@@ -1,4 +1,8 @@
 """Takes the ice floe tracker data used in the GRL paper and adds NSIDC sea ice motion and sea ice concentration.
+This runs fine with Python 3.9 and xarray 2023.6 (airsea environment on my machine) but fails with Python 3.10 and xarray 2023.5
+
+
+TBD: Add ERA5 wind data as well.
 TBD: Describe the saved NSIDC data so that others can run this."""
 
 import os
@@ -160,7 +164,7 @@ for year in ift_data:
                 ift_data[year] = pd.concat([ift_data[year], icemotion], axis=1)
             else:
                 # check this - it's not quite right. Like, we're getting duplicates of the u/v columns
-                ift_data[year] = pd.concat([ift_data[year], icemotion.drop(['u_nsidc', 'v_nsidc'], axis=1]), axis=1)
+                ift_data[year] = pd.concat([ift_data[year], icemotion.drop(['u_nsidc', 'v_nsidc'], axis=1)], axis=1)
 
     ift_data[year] = compute_along_across_components(ift_data[year],
                                      umean='u5D_nsidc',
