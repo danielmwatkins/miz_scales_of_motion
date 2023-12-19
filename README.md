@@ -22,8 +22,7 @@ micromamba environment.
 # scripts
 `01_extract_ift_data.py` This script reads that matlab output Rosalinda generated, then produces CSV files with the time stamps, floe 
 properties, and floe ids. (TBD: currently inside a notebook, needs to placed into a script) 
-`02_interpolate_ift_data.py` Makes a best estimate of the IFT floe locations at exactly 12 UTC each day to enable velocity estimation. Also 
-compiles floe properties and rotation rates.  
+`02_interpolate_ift_data.py` Makes a best estimate of the IFT floe locations at exactly 12 UTC each day to enable velocity estimation. Also compiles floe properties and rotation rates. Adds a qc flag based on speed z-score (must be less than 6), circularity (must be greater than 0.6), total path length, and a speed threshold (maximum speed must be larger than 1 pixel/day).
 `03_add_nsidc_info_ift.py` Interpolates NSIDC ice motion and climate data record sea ice concentration to floe locations, and calculates the 
 distance to the sea ice edge. TBD: add ERA5 wind data as well. Requires external datasets.
 `04_finding_polygons.py` Searches all possible combinations of three sea ice floes, and makes a list of all the combinations with minimum 
@@ -32,9 +31,49 @@ interior angle greater than 20 degrees. The polygon data is large - 1.15 GB - so
 
 
 # data
-`floe_tracker` folder contains `ift_with_nsidc.csv` which has the interpolated tracked floes with all the floe properties. The subfolder 
+`floe_tracker` folder contains `ift_with_era5.csv` which has the interpolated tracked floes with all the floe properties with wind speeds from ERA5 added in. `ift_with_nsidc.csv` is produced first; `ift_with_era5.csv` contains the same data but with the addition of the winds. The subfolder 
 `interpolated` has the files for each year as produced by script 2. The subfolder `parsed` has the full IFT data including non-tracked floes 
 produced by script 1. 
+| --- | --- | --- |
+| Column name | definition | units |
+'year' | Year (YYYY) |  |
+'datetime' | Date and time (YYYY-mm-dd HH:MM) | |
+'floe_id' | Floe ID | |
+'x_stere' | meters |
+'y_stere' | meters |
+'longitude' | decimal degrees |
+'latitude' | decimal degrees |
+'area'
+'perimeter'
+'major_axis'
+'minor_axis'
+'zeta',
+'zeta_est',
+'u' | meters per second
+'v' | meters per second
+'bearing'
+'speed'
+'circularity',
+'qc_flag',
+'sea_ice_concentration', 
+'edge_dist',
+'u_nsidc', 
+'v_nsidc', 
+'u5D_nsidc',
+'v5D_nsidc',
+'u15D_nsidc',
+'v15D_nsidc',
+'u31D_nsidc',
+'v31D_nsidc',
+'u_along', 
+'v_along',
+'u_across',
+'v_across',
+'U_fluctuating',
+'U_along',
+'u_wind',
+'v_wind',
+'wind_speed'
 
 # figures
 Figures should be print-ready for Annals of Glaciology. They should be eps, tif, or pdf if possible. (Some figures need to be compressed into 

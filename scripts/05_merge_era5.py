@@ -85,8 +85,6 @@ for year in floe_tracker_results:
                 data.index, ['u_wind', 'v_wind']] = era5_uv_along_track(data, ds_era)    
 
 ft_df = pd.concat(floe_tracker_results)
-ft_df.drop('datetime', axis=1, inplace=True)
-ft_df.rename({'datetime_temp': 'datetime'}, axis=1, inplace=True)
 ft_df['wind_speed'] = (ft_df['u_wind']**2 + ft_df['v_wind']**2)**0.5
 
 ft_df.to_csv('../data/floe_tracker/ift_with_era5.csv')

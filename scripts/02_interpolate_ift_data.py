@@ -25,7 +25,8 @@ saveloc_single = '../data/floe_tracker/'
 dataloc = '../data/floe_tracker/parsed/tracked_floes/'
 
 max_diff = 30 
-max_speed = 1.5
+max_speed = 1.5 # Threshold to include in the standard deviation calculation
+max_speed_z = 6 # Threshold for speed z-score
 min_speed = 0.005 # Position uncertainty = 266, so 2*sigma / day
 min_circ = 0.6
 min_length = 250 # meters!
@@ -208,8 +209,15 @@ ft_df = pd.concat(floe_tracker_results)
 ft_df['circularity'] = 4*np.pi * ft_df['area']/(ft_df['perimeter']**2)
 
 # Filters
-speed_check = ft_df.speed >= max_speed
 circ_check = ft_df.circularity <= min_circ
+init_filter = ~circ_check & (ft_df.speed <= max_speed)
+sigma_speed = ft_df.loc[init_filter, 'speed'].std()
+
+mean_u = ft_df.loc[init_filter, 'u'].mean()
+mean_v = ft_df.loc[init_filter, 'v'].mean()
+
+z = np.sqrt((ft_df.u - mean_u)**2 + (ft_df.v - mean_v)**2)/sigma_speed
+speed_check = np.abs(z) > 6
 
 too_short = ft_df.groupby('floe_id').filter(lambda x: path_length(x.x_stere, x.y_stere)/len(x) < min_length) # Less than 1 pixel per day
 min_speed_check = ft_df.groupby('floe_id').filter(lambda x: np.max(x.speed) < min_speed)
