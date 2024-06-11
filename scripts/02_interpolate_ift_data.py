@@ -15,7 +15,7 @@ from metpy.units import units
 import metpy.calc as mcalc
 import xarray as xr
 import sys
-sys.path.append('/Users/dwatkin2/Documents/research/packages/buoy_processing')
+# sys.path.append('/Users/dwatkin2/Documents/research/packages/buoy_processing')
 import drifter
 from drifter.src.analysis import compute_velocity
 from scipy.interpolate import interp1d

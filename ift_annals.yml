@@ -1,0 +1,17 @@
+name: ift_annals
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - cartopy
+  - jupyter
+  - metpy
+  - netcdf4
+  - numpy
+  - pandas=1.5.3
+  - proplot=0.9.7
+  - python=3.9.13
+  - rasterio
+  - scipy
+  - xarray
+prefix: /opt/miniconda3/envs/ift_annals

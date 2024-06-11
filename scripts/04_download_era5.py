@@ -1,4 +1,5 @@
-"""First downloads hourly ERA5 data to memory, then writes daily average to file"""
+"""Used in earlier version of paper - move and consider for use later. Potential to keep if I use it in understanding the deformation!
+"""
 import cdsapi
 import xarray as xr
 import os
