@@ -12,14 +12,14 @@ the Git repository and provide instructions on how to obtain it. Analysis code a
 be re-generated without additional computation time. This also lets us make minor changes to figures easily.
 
 # python environment
-List the key libraries here. In the final version, we'll attempt to make a yml file that allows users to recreate the correct Conda or 
-micromamba environment.  
-`proplot`  
-`xarray`  
-`pandas`  
-`numpy`  
+The python environment used to run the scripts here can be recreated using the `ift_annals.yml` file. After installing miniconda, open a terminal, navigate to the project folders, and run
+```conda env create -f ift_annals.yml```
 
 # scripts
+After activating the conda environment, the scripts can be run by navigating to the scripts folder in terminal and running e.g.
+```python 01_extract_ift_data.py```
+The function adding the NSIDC ice motion and sea ice concentration data requires these datasets to be downloaded separately.
+
 `01_extract_ift_data.py` This script reads that matlab output Rosalinda generated, then produces CSV files with the time stamps, floe 
 properties, and floe ids. (TBD: currently inside a notebook, needs to placed into a script) 
 `02_interpolate_ift_data.py` Makes a best estimate of the IFT floe locations at exactly 12 UTC each day to enable velocity estimation. Also compiles floe properties and rotation rates. Adds a qc flag based on speed z-score (must be less than 6), circularity (must be greater than 0.6), total path length, and a speed threshold (maximum speed must be larger than 1 pixel/day).
