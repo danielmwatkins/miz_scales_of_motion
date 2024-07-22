@@ -4,27 +4,25 @@ import pyproj
 import numpy as np
 import rasterio
 
-timestep = '14D'
+
 
 # bounding box
 # from reference image
 im = rasterio.open("../data/floe_tracker/unparsed/NE_Greenland.2017100.terra.250m.tif")
 left, bottom, right, top = im.bounds
 
-def make_specification_table(name, left_x, right_x, bottom_y, top_y, timestep, startdate, enddate):
+def make_specification_table(name, left_x, right_x, bottom_y, top_y, startdate, enddate):
     """Given bounding box, start/end dates, and timestep, generate a table with
     a row for each case of length timestep between the start and end dates with
     all the information needed for running IFT. Each row is assigned an identifier
-    with the format NNN-name-startdate-enddate"""
-    ts = pd.to_timedelta(timestep)
+    with the format name-startdate-enddate"""
     start = pd.to_datetime(startdate)
     end = pd.to_datetime(enddate)
 
-    start_dates = pd.date_range(start, end, freq=ts)
-    end_dates = start_dates + ts
-
+    dates = pd.date_range(start, end + pd.DateOffset(months=1), freq='MS')
+    start_dates = dates[:-1]
+    end_dates = dates[1:]
     
-
     crs0 = pyproj.CRS('epsg:3413')
     crs1 = pyproj.CRS('WGS84')
     transformer_ll = pyproj.Transformer.from_crs(crs0, crs_to=crs1, always_xy=True)
@@ -53,11 +51,14 @@ def make_specification_table(name, left_x, right_x, bottom_y, top_y, timestep, s
         'top_y': top_y,
         'startdate': start_dates,
         'enddate': end_dates})
+
+    # set the first date to the start date in case it's before the first of the month
+    table.loc[table.index[0], 'startdate'] = min(start_dates.min(), start)
     
     # set the last date to the specified end date
     table.loc[table.index[-1], 'enddate'] = min(end_dates.max(), end)
-
-    names = ['-'.join([str(x).zfill(3), name, start.strftime('%Y%m%d'), end.strftime('%Y%m%d')]) for
+    
+    names = ['-'.join([name, start.strftime('%Y%m%d'), end.strftime('%Y%m%d')]) for
                       x, (start, end) in enumerate(zip(table.startdate, table.enddate))]
 
     table['location'] = names
@@ -71,7 +72,7 @@ def make_specification_table(name, left_x, right_x, bottom_y, top_y, timestep, s
 
 
 for year in range(2003, 2023):
-    startdate = '{y}-03-15'.format(y=year) # start date inclusive
+    startdate = '{y}-03-31'.format(y=year) # start date inclusive
     enddate = '{y}-10-01'.format(y=year) # end date exclusive
-    table = make_specification_table('fram_strait', left, right, bottom, top, timestep, startdate, enddate)
-    table.to_csv('../data/floe_tracker_config/location_specs_{y}.csv'.format(y=year))
+    table = make_specification_table('fram_strait', left, right, bottom, top, startdate, enddate)
+    table.to_csv('../data/floe_tracker/modis_download_spec_files/location_specs_{y}.csv'.format(y=year))

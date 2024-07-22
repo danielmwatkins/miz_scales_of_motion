@@ -8,7 +8,7 @@ dependencies:
   - metpy
   - netcdf4
   - numpy
-  - pandas=1.5.3
+  - pandas
   - proplot=0.9.7
   - python=3.9.13
   - rasterio

@@ -1,9 +1,11 @@
 # scales of motion in the summer marginal ice zone
+This repository contains code, data, and notebooks used for the paper "Observing floe-scale sea ice motion in the Greenland Sea marginal ice zone during summer," submitted to _Annals of Glaciology_.
 We examine the spatial and temporal scales of sea ice motion at floe scale using floe trajectories derived from optical satellite imagery. 
 The analysis focuses on observations from the East Greenland Sea from 2003-2020 during the sunlit months (April-August). 
 
 # structure
-The repository contains folders for data, scripts, figures, and Jupyter notebooks. Github limits the size of data, so we cannot save the 
+The repository contains folders for data, scripts, figures, and Jupyter notebooks. The processed imagery is stored externally in the Brown Digital Repository.
+Github limits the size of data, so we cannot save the 
 satellite imagery here, however the processed floe data should be small enough to work. In general: if github lets you upload it, place the 
 data in the data folder and give it a descriptive name. I prefer lower case names with no spaces but I won't fight you if you have different 
 preferences. Code to reproduce each step of the analysis and to reproduce each figure should go into the scripts folder. Where possible, use 
@@ -16,9 +18,15 @@ The python environment used to run the scripts here can be recreated using the `
 ```conda env create -f ift_annals.yml```
 
 # scripts
+New data processing pipeline:
+- `process_fram_strait_v0` Github repo processes the matlab data and combines it with the truecolor and falsecolor satellite imagery. This is where initial data processing and cleaning is taking place.
+- `01_add_external_data.py` Interpolate ERA5 wind and sea level pressure data to floe positions in the interpolated data; add ice edge distance to the interpolated and to the full dataset.
+
+
 After activating the conda environment, the scripts can be run by navigating to the scripts folder in terminal and running e.g.
 ```python 01_extract_ift_data.py```
 The function adding the NSIDC ice motion and sea ice concentration data requires these datasets to be downloaded separately.
+
 
 `01_extract_ift_data.py` This script reads that matlab output Rosalinda generated, then produces CSV files with the time stamps, floe 
 properties, and floe ids. (TBD: currently inside a notebook, needs to placed into a script) 

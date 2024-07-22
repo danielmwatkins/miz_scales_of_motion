@@ -82,9 +82,6 @@ def estimate_theta(df):
     df['theta_aqua_est'] = np.nan
     df_t = df.loc[df.satellite=='terra']
     df_a = df.loc[df.satellite=='aqua']
-
-    
-
     
     t_theta_est1 = df_t.orientation.shift(-1) - df_t.orientation
     t_theta_est2 = (df_t.orientation % 180).shift(-1) - df_t.orientation

@@ -177,8 +177,8 @@ def parser_ift(year, dataloc, ref_image):
                 columns=['area','perimeter','major_axis','minor_axis',
                          'orientation','x_pixel', 'y_pixel','convex_area','solidity',
                          'bbox1', 'bbox2', 'bbox3','bbox4'])
-
-            p_df['floe_id'] = np.nan
+            p_df['orig_idx'] = p_df.index
+            p_df['floe_id'] = 'unmatched'
             p_df['datetime'] = date
             floe_id_list = df_by_date[date].index
             for floe_id in floe_id_list:            
@@ -187,7 +187,7 @@ def parser_ift(year, dataloc, ref_image):
                 py_idx = np.abs(p_df.y_pixel.values - \
                                 df_by_date[date].loc[floe_id, 'y_pixel']).argmin()
                 
-                if px_idx == py_idx:
+                if np.abs(px_idx - py_idx) < 1e-6:
                     # add threshold to make sure that it's a match
         
                     dx = p_df.loc[px_idx, 'x_pixel'] - df_by_date[date].loc[floe_id, 'x_pixel']
@@ -198,10 +198,10 @@ def parser_ift(year, dataloc, ref_image):
                     
                     p_df.loc[px_idx, 'floe_id'] = floe_id
             all_props[idx] = p_df.copy()
-            matched_props[idx] = p_df.dropna().loc[:,
+            matched_props[idx] = p_df.where(p_df.floe_id != 'unmatched').dropna().loc[:,
                     ['floe_id', 'datetime', 'area',
                      'perimeter', 'major_axis', 'minor_axis',
-                     'orientation']]
+                     'orientation', 'convex_area', 'solidity']]
 
     
     # Finally, link the matched properties and the trajectories
@@ -210,6 +210,9 @@ def parser_ift(year, dataloc, ref_image):
 
     # Add correct position data to all_props matrix
     df_all_props = pd.concat(all_props).reset_index(drop=True)
+    
+    # Add step to rename the original index
+    
     if year == 2020:
         # The images from 2020 reference a different image and
         # are stretched in the y direction. This applies a linear correction.
