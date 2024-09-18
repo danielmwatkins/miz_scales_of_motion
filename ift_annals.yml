@@ -9,6 +9,7 @@ dependencies:
   - netcdf4
   - numpy
   - pandas
+  - powerlaw
   - proplot=0.9.7
   - python=3.9.13
   - rasterio

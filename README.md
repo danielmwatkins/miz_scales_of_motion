@@ -85,7 +85,15 @@ produced by script 1.
 
 # figures
 Figures should be print-ready for Annals of Glaciology. They should be eps, tif, or pdf if possible. (Some figures need to be compressed into 
-jpg first and then converted, such as scatterplots with huge numbers of points). The figure width should be 86 mm for single column figures 
-and 178 mm for two-column figures. Fontsize should be 9. Font should be Optima, or if that is not available, Arial. 
+jpg first and then converted, such as scatterplots with huge numbers of points). The figure width should be 85 mm for single column figures 
+and 179 mm for two-column figures. Fontsize should be 9. Font should be Optima, or if that is not available, Arial. 
 
 
+# TBD items
+- Check font size in figures
+- Update methodology for deformation section
+    - Effect of reusing floes - how can we avoid it?
+    - Selecting
+- Description of updated FSD results
+- Comparison of FSD results to prior work
+- Description of updated deformation results

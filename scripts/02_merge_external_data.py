@@ -158,9 +158,11 @@ for year in ift_tracks:
             if len(comp_df) > 0:
                 d = pd.Series([min_distance(x, y, comp_df) for x, y in zip(group.x_stere, group.y_stere)],
                       index=group.index)
-                ift_props[year].loc[d.index, 'coast_dist_km'] = np.round(d/1e3, 1)    
 
-pd.concat([ift_props[y] for y in ift_props]).to_csv(saveloc + 'ift_floe_properties.csv')                
+                ift_props[year].loc[d.index, 'coast_dist_km'] = np.round(d/1e3, 1) 
+    ift_props[year].to_csv(saveloc + 'ift_floe_property_tables/with_nsidc/ift_floe_properties_{y}.csv'.format(y=year))     
+
+      
 for year in ift_tracks:
     with xr.open_dataset(nsidc_motion_loc + 'icemotion_daily_nh_25km_' + \
                          str(year) + '0101_' + str(year) + '1231_v4.1.nc') as ds:
@@ -185,16 +187,4 @@ for year in ift_tracks:
                 ift_tracks[year] = pd.concat([ift_tracks[year],
                                               icemotion.drop(['u_nsidc', 'v_nsidc'], axis=1)], axis=1)
 
-# Set this up to subtract the mean first, rather than only rotating
-    # ift_tracks[year] = compute_along_across_components(ift_tracks[year],
-    #                                  umean='u5D_nsidc',
-    #                                  vmean='v5D_nsidc')
-
-    # for time in [15, 31]:
-    #     df = compute_along_across_components(ift_tracks[year],
-    #                                  umean='u{t}D_nsidc'.format(t=time),
-    #                                  vmean='v{t}D_nsidc'.format(t=time))
-    #     for var in ['u_along','v_along', 'u_across', 'v_across', 'U_fluctuating', 'U_along']:
-    #         ift_tracks[year][var + '_' + str(time) + 'D'] = df[var]
-    
 pd.concat([ift_tracks[y] for y in ift_tracks]).to_csv(saveloc + 'ift_floe_trajectories.csv')
