@@ -160,6 +160,8 @@ for year in ift_tracks:
                       index=group.index)
 
                 ift_props[year].loc[d.index, 'coast_dist_km'] = np.round(d/1e3, 1) 
+
+
     ift_props[year].to_csv(saveloc + 'ift_floe_property_tables/with_nsidc/ift_floe_properties_{y}.csv'.format(y=year))     
 
       
@@ -186,5 +188,9 @@ for year in ift_tracks:
             else:
                 ift_tracks[year] = pd.concat([ift_tracks[year],
                                               icemotion.drop(['u_nsidc', 'v_nsidc'], axis=1)], axis=1)
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> fe73f6d904461a2ff96dde2329077d1715182dcb
 pd.concat([ift_tracks[y] for y in ift_tracks]).to_csv(saveloc + 'ift_floe_trajectories.csv')
