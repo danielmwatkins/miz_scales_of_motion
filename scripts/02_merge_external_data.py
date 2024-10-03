@@ -95,7 +95,7 @@ def icemotion_along_track(position_data, uv_data, dt_days=5):
     return uv
     
 def min_distance(x0, y0, comp_df):
-    """Compute the distance to the nearest pixel with above 0 and less than 30 percent sea ice concentration"""
+    """Compute the distance to the nearest pixel with 0 sea ice concentration"""
     d = (comp_df['x'] - x0)**2 + (comp_df['y'] - y0)**2
     return np.round(np.sqrt(d.min()), 0)
 
