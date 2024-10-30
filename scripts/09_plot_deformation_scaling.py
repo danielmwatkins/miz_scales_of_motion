@@ -82,17 +82,16 @@ for month in samples:
         likelihood_results.loc[beta] = normal_log_likelihood(strat_samp['total_deformation']*(60*60*24),
                                                              strat_samp['L'], beta)
     beta = likelihood_results.idxmax()
-    bs_table.loc[month, 'beta_mle'] = beta
+    bs_table.loc[month, 'beta_mle'] = beta 
 
-    if len(data_mean) > 5:
-        beta, a, r, p, err = linregress(np.log(strat_samp['L']), np.log(strat_samp['total_deformation']*24*60*60))
-        bs_table.loc[month, 'beta_lsq'] = -beta
-        bs_table.loc[month, 'a_lsq'] = a
+    beta, a, r, p, err = linregress(np.log(strat_samp['L']), np.log(strat_samp['total_deformation']*24*60*60))
+    bs_table.loc[month, 'beta_lsq'] = -beta
+    bs_table.loc[month, 'a_lsq'] = a
 
 ###### Plotting #########
 fig, axs = pplt.subplots(ncols=3)
 for ax, month, monthname in zip(axs, range(4, 7), ['April', 'May', 'June']):
-    strat_samp = pd.concat(samples[month], axis=0)
+    strat_samp = samples[month]
     strat_samp['log_total_deformation'] = np.log(strat_samp['total_deformation'])
     data = strat_samp.loc[(strat_samp.datetime.dt.month == month) & (strat_samp.no_overlap_sample)]
     data = data.loc[(data.log_bin > 0) & (data.log_bin < 10)]

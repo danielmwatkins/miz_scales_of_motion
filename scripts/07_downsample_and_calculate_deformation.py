@@ -126,9 +126,12 @@ for date, date_group in all_results.groupby('datetime'):
         all_results.loc[non_overlapping_rows, 'no_overlap_sample'] = True
 
 columns = ['datetime', 'triangle_number', 'floe1', 'floe2', 'floe3', 'u1', 'u2',
-       'u3', 'v1', 'v2', 'v3', 'x1', 'x2', 'x3', 'y1', 'y2', 'y3',
-       'area_km21', 'area_km22', 'area_km23', 'zeta1', 'zeta2', 'zeta3',
-       'edge_dist_km1', 'edge_dist_km2', 'edge_dist_km3', 'coast_dist_km1',
-       'coast_dist_km2', 'coast_dist_km3', 'polygon_area', 'min_angle', 'L', 'log_bin', 'no_overlap_sample', 'unique_floes_sample']
+           'u3', 'v1', 'v2', 'v3', 'x1', 'x2', 'x3', 'y1', 'y2', 'y3',
+           'area_km21', 'area_km22', 'area_km23', 'zeta1', 'zeta2', 'zeta3',
+           'edge_dist_km1', 'edge_dist_km2', 'edge_dist_km3', 'coast_dist_km1',
+           'coast_dist_km2', 'coast_dist_km3', 'polygon_area', 'min_angle', 'L', 'log_bin',
+           'divergence', 'vorticity', 'pure_shear', 'normal_shear', 'total_deformation',
+           'no_overlap_sample', 'unique_floes_sample']
+
 all_results['sampled'] = all_results['no_overlap_sample'] | all_results['unique_floes_sample']
 all_results.loc[all_results.sampled, columns].to_csv('../data/deformation/sampled_results.csv')
