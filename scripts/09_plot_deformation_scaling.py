@@ -98,6 +98,11 @@ for ax, month, monthname in zip(axs, range(4, 7), ['April', 'May', 'June']):
     ax.scatter(data['L'].values, data['total_deformation'].values*24*60*60, m='.', color='blue3', ms=2, zorder=0, label='')
     data_mean = data.loc[:, ['L', 'total_deformation', 'log_bin']].groupby('log_bin').mean()
     ax.plot(data_mean['L'].values, data_mean['total_deformation'].values*24*60*60, marker='o', color='k')
+
+    # Uncomment to plot the standard deviation
+    # data_stdv = data.loc[:, ['L', 'total_deformation', 'log_bin']].groupby('log_bin').std()
+    # ax.plot(data_mean['L'].values, data_stdv['total_deformation'].values*24*60*60, marker='+', ls='--', color='k')
+
     
     n = data.loc[:, ['L', 'total_deformation', 'log_bin']].groupby('log_bin').count()    
     beta_mle = bs_table.loc[month, 'beta_mle']
@@ -105,9 +110,13 @@ for ax, month, monthname in zip(axs, range(4, 7), ['April', 'May', 'June']):
     mu = np.mean(np.log(scaled_eps))
     sigma = np.std(np.log(scaled_eps))
     mean = np.exp(mu + sigma**2/2)
+    stdev = np.sqrt((np.exp(sigma**2)-1)*np.exp(2*mu + sigma**2))
     ax.plot(data_mean['L'].values, (np.exp(mu)*data_mean['L']**(-beta_mle)).values, label='', color='r', marker='^', ms=5, lw=1, zorder=5)
     ax.plot(data_mean['L'].values, (mean*data_mean['L']**(-beta_mle)).values, label='', color='r', marker='.', ms=5, lw=1, zorder=5)
-  
+    ax.plot(data_mean['L'].values, (stdev*data_mean['L']**(-beta_mle)).values, label='', ls='--', color='r', marker='+', ms=5, lw=1, zorder=5)
+
+
+    
     min_beta = bs_table.loc[month, 'min_beta_mle']
     max_beta = bs_table.loc[month, 'max_beta_mle']    
     mle_result = '$\\beta={b} \, ({minb}, {maxb})$'.format(b=np.round(beta_mle, 2),
@@ -135,7 +144,8 @@ for ax, month, monthname in zip(axs, range(4, 7), ['April', 'May', 'June']):
     # Uncomment to show LSQ results
     # ax.format(lltitle='MLE: ' + mle_result + '\n' + 'LSQ: ' + lr_result, xreverse=False)
     ax.format(lltitle=mle_result)
-    ax.format(yscale='log', xscale='log', ylim=(0.9e-3, 1.5), ylabel='Deformation per day', xlim=(9, 150), title=monthname, xreverse=False)
+    ax.format(yscale='log', xscale='log', ylim=(0.9e-3, 1.5), xlabel='Length scale (km)',
+              ylabel='Total deformation ($s^{-1}$)', xlim=(9, 150), title=monthname, xreverse=False)
 
 h = [ax.plot([],[], c=c, lw=lw, m=m, ms=ms, ls=ls) for c, lw, m, ms, ls in zip(
                 ['blue3', 'k', 'blue8', 'blue8', 'blue8', 'r', 'r'],
@@ -143,8 +153,9 @@ h = [ax.plot([],[], c=c, lw=lw, m=m, ms=ms, ls=ls) for c, lw, m, ms, ls in zip(
                 ['o', 'o', '^', '', '', '.', '^'],
                 [5, 5, 5, 0, 0, 0, 4, 5],
                 ['', '-', '-', '--', ':', '-', '-'])]
- 
+                 #Obs / Mean / Median / 25-75
 
 # make custom legend
 ax.legend(h, ['Observations', 'Mean', 'Median', '25-75%', '10-90%', 'MLE Mean', 'MLE Median'], ncols=1,loc='r')
 fig.save('../figures/fig10_deformation_scales.png', dpi=300)
+fig.save('../figures/fig10_deformation_scales.pdf', dpi=300)

@@ -157,7 +157,7 @@ for ax, symb, var in zip([axs[0], axs[1]], ['d', '+'], ['U_along', 'U_fluctuatin
     ax.scatter(x_center, pdf, marker=symb, label='', zorder=5) 
     ax.plot(x_center, normal_dist(x_center), marker='',
             lw=1, color='k', ls='--', label='N(0, 1)', zorder=10)
-    ax.plot(x_center, expon_dist(np.abs(x_center)), marker='',
+    ax.plot(x_center, 0.5*expon_dist(np.abs(x_center)), marker='',
             lw=1, color='k', ls=':', label='Exp({s})'.format(s=np.round(exp_scale, 2)), zorder=10)
     
     ax.legend(loc='ur', ncols=1)    
