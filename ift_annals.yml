@@ -14,5 +14,6 @@ dependencies:
   - python=3.9.13
   - rasterio
   - scipy
+  - scikit-image
   - xarray
 prefix: /opt/miniconda3/envs/ift_annals

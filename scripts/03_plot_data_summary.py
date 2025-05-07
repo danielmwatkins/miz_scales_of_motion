@@ -30,7 +30,7 @@ for file in os.listdir('../data/floe_tracker/ift_floe_property_tables/clean/'):
         floe_lib_clean[year] = pd.read_csv('../data/floe_tracker/ift_floe_property_tables/clean/' + file,
                                          index_col=0, dtype={'classification': str})
         floe_lib_clean[year]['datetime'] = pd.to_datetime(floe_lib_clean[year]['datetime'])
-floe_lib_clean = pd.concat(floe_lib_clean)
+floe_lib_clean = pd.concat(floe_lib_clean).reset_index()
 
 trajectories = pd.read_csv('../data/floe_tracker/ift_floe_trajectories.csv', index_col=0)
 trajectories['datetime'] = pd.to_datetime(trajectories['datetime'])
@@ -94,18 +94,18 @@ ax.imshow(pp_image, cmap='mono_r', extent=[left, right, bottom, top])
 lb_raw_image = rio.open('../data/modis_imagery/{d}.aqua.labeled_raw.250m.tiff'.format(d=date)).read()
 lb_clean_image = rio.open('../data/modis_imagery/{d}.aqua.labeled_clean.250m.tiff'.format(d=date)).read()
 ax.imshow(np.ma.masked_array(reshape_as_image(lb_raw_image),
-                                reshape_as_image(lb_raw_image)==0), color='r', alpha=0.75, extent=[left, right, bottom, top])
+                                reshape_as_image(lb_raw_image)==0), color='sky blue', alpha=0.75, extent=[left, right, bottom, top])
 ax.imshow(np.ma.masked_array(reshape_as_image(lb_clean_image),
-                                reshape_as_image(lb_clean_image)==0), color='gold', alpha=1, extent=[left, right, bottom, top])
+                                reshape_as_image(lb_clean_image)==0), color='tangerine', alpha=1, extent=[left, right, bottom, top])
 
-h = [ax.plot([],[], color=c, alpha=a, lw=0, marker='s') for c, a in zip(['r', 'gold', 'k'], [0.5, 1, 1])]
+h = [ax.plot([],[], color=c, alpha=a, lw=0, marker='s') for c, a in zip(['sky blue', 'tangerine', 'k'], [0.5, 1, 1])]
 
 ax.legend(h, ['Non-floes', 'Floes', 'Masked'], loc='ll', ncols=1, alpha=1)  
 for ax in axs:
     ax.format(ylim=(-2, -1.5), xlim=(0.6, 1.1))
 axs.format(abc=True)
 for ax, title in zip(axs[0,:], ['True Color', 'False Color', 'Processed']):
-    ax.format(title=title, ylabel='Y (m $\\times 10^6$)', xlabel='X (m $\\times 10^6)$')
+    ax.format(title=title, ylabel='Y ($\\times 10^6$ m)', xlabel='X ($\\times 10^6$ m)')
 
 
 
@@ -113,19 +113,34 @@ for ax, date in zip(axs[1,:], man_images):
     ax.imshow(reshape_as_image(tc_images[date]), extent=[left, right, bottom, top])
     outlines = man_images[date] - skimage.morphology.erosion(man_images[date], skimage.morphology.disk(4))
     # ax.imshow(np.ma.masked_array(man_images[date], man_images[date]==0), c='k')
-    ax.imshow(np.ma.masked_array(ift_images[date], ift_images[date]==0), c='r', extent=[left, right, bottom, top], alpha=0.75)
-    ax.imshow(np.ma.masked_array(ift_clean[date], ift_clean[date]==0), c='gold', extent=[left, right, bottom, top], alpha=1)
+    ax.imshow(np.ma.masked_array(ift_images[date], ift_images[date]==0), c='sky blue', extent=[left, right, bottom, top], alpha=0.75)
+    ax.imshow(np.ma.masked_array(ift_clean[date], ift_clean[date]==0), c='tangerine', extent=[left, right, bottom, top], alpha=1)
     ax.pcolorfast(np.linspace(left, right, outlines.shape[1]),
                   np.linspace(top, bottom, outlines.shape[0]),
                   np.ma.masked_array(outlines, mask=outlines == 0), color='b')
     ax.format(xlim=(0.75, 0.95), ylim=(-1.6, -1.4), xtickminor=False, ytickminor=False, xlocator=0.1, ylocator=0.1,
               title=date.strftime('%Y-%m-%d'), yreverse=False)
 
-h = [ax.plot([],[], ls=ls, m=m, lw=lw, color=c) for lw, c, ls, m in zip([1, 3, 3], ['b', 'gold', 'r'], ['-', '', ''], ['', 's', 's'])]
+h = [ax.plot([],[], ls=ls, m=m, lw=lw, color=c) for lw, c, ls, m in zip([1, 3, 3], ['b', 'tangerine', 'sky blue'], ['-', '', ''], ['', 's', 's'])]
 axs[1, 0].legend(h, ['Manual', 'IFT floes', 'IFT non-floes'], loc='ul', ncols=1, alpha=1)
 
 for ax in axs[1, 0:2]:
-    ax.format(ylabel='Y (m $\\times 10^6$)', xlabel='X (m $\\times 10^6)$')
+    ax.format(ylabel='Y ($\\times 10^6$ m)', xlabel='X ($\\times 10^6 m)$')
+
+### Print the MSE ###
+df_all = pd.concat(dataframes)
+df_all = df_all.loc[df_all.manual_area.notnull(),:]
+df_all['area_adj'] = (df_all['area'].values**0.5 + 6)**2
+
+area_init = df_all['area'] * 0.25**2
+area_ift = df_all['area_adj'] * 0.25**2
+area_man = df_all['manual_area'] * 0.25**2
+
+mse = np.sqrt(np.mean((area_init - area_man)**2))
+print('RMSE init:', np.round(mse, 3))
+
+mse = np.sqrt(np.mean((area_ift - area_man)**2))
+print('RMSE post:', np.round(mse, 3))
 
 
 for date in dataframes:
@@ -149,13 +164,78 @@ h = [axs[1, 2].plot([],[],marker=m, color=c, lw=lw, ls=ls, alpha=a)
              for a, m, c, lw, ls in zip([0.5, 1, 1], ['.', '+', ''], ['gold', 'b', 'k'], [0,0,1], ['', '', '--'])]
 axs[1, 2].legend(h, ['Raw', 'Adjusted', '1:1'], ncols=1, loc='ul')
 
-fig.save('../figures/fig01_algorithm_example.pdf', dpi=300)
-fig.save('../figures/fig01_algorithm_example.png', dpi=300)
+fig.save('../figures/fig02_algorithm_example.pdf', dpi=300)
+fig.save('../figures/fig02_algorithm_example.png', dpi=300)
 
+######## Figure 2: Trajectory example ########
 
-######## Figure 2: Trajectory example and rotation rates #########
+# Dates with multiple tracked floes, all from the Aqua satellite
+plot_dates = [pd.to_datetime(x) for x in ['2014-04-27 12:38:45', '2014-04-28 11:43:40',
+                                          '2014-04-29 12:26:32', '2014-04-30 11:31:29']]
 
+# load images
+tc_images = {}
+floe_images = {}
 
+for date in plot_dates:
+    tc_images[date] = rio.open('../data/modis_imagery/{d}.aqua.truecolor.250m.tiff'.format(d=date.strftime('%Y%m%d')))
+    floe_images[date] = rio.open('../figures/images_for_example_ift/{d}.aqua.labeled_clean.250m.tiff'.format(d=date.strftime('%Y%m%d')))
+
+imdate = pd.to_datetime('2014-04-27 12:38:45')
+plot_floes = floe_lib_clean.loc[(floe_lib_clean.floe_id != 'unmatched') & (floe_lib_clean.datetime.dt.year == imdate.year)].groupby('floe_id').filter(lambda x: imdate in x.datetime.values)
+
+# get nearby floes that have enough dates
+floe = '2014_01741'
+comp_floe_loc = plot_floes.loc[plot_floes.floe_id == floe, ['x_stere', 'y_stere']].mean()
+dx = 1e5
+dy = 1e5
+nearby_floes = plot_floes.loc[np.sqrt((plot_floes.x_stere - comp_floe_loc.x_stere)**2 + \
+                                      (plot_floes.y_stere - comp_floe_loc.y_stere)**2) < dx]
+nearby_floes = nearby_floes.groupby('floe_id').filter(lambda x: np.sum([d in x.datetime.values for d in plot_dates])>2)
+floes = np.unique(nearby_floes.floe_id)
+
+left, bottom, right, top = tc_images[imdate].bounds
+left /= 1e3
+bottom /= 1e3
+right /= 1e3
+top /= 1e3
+
+x0 = 850
+y0 = -1700
+left -= x0
+right -= x0
+top -= y0
+bottom -= y0
+
+fig, axs = pplt.subplots(ncols=2, nrows=2, width=6, spanx=False, spany=False)
+
+colors = [c['color'] for c in pplt.Cycle('Dark2', 12)]
+
+for ax, date in zip(axs,plot_dates):
+    ax.imshow(reshape_as_image(tc_images[date].read()), extent=[left, right, bottom, top])
+    image = floe_images[date].read().squeeze()
+    
+    outlines = image - skimage.morphology.erosion(image, skimage.morphology.disk(4))
+
+    for c, floe in zip(colors, floes):
+        df_floe = plot_floes.loc[plot_floes.floe_id == floe].set_index('datetime')
+
+        # Plot the main tracked floe
+        if date in df_floe.index:
+            ax.pcolorfast(np.linspace(left, right, outlines.shape[1]),
+                  np.linspace(top, bottom, outlines.shape[0]),
+                  np.ma.masked_array(outlines, mask=outlines != df_floe.loc[date, 'label']), color=c)
+
+            ax.plot(df_floe.loc[df_floe.index <= date, 'x_stere'].values/1e3 - x0,
+                    df_floe.loc[df_floe.index <= date, 'y_stere'].values/1e3 - y0, color=c, marker='.', facecolor='w')
+            ax.plot(df_floe.loc[date, 'x_stere']/1e3 - x0,
+                    df_floe.loc[date, 'y_stere']/1e3 - y0, color=c, marker='.')
+            
+    ax.format(ylim=(-100, 100), xlim=(-100, 100), title=date, ylabel='Y (km)', xlabel='X (km)')
+axs.format(abc=True)
+fig.save('../figures/fig03_tracked_floes.png', dpi=300)
+fig.save('../figures/fig03_tracked_floes.pdf', dpi=300)
+pplt.close(fig)
 
 ######## Figure 3: Summary of data availability
 import cartopy.crs as ccrs
@@ -272,5 +352,5 @@ ax.format(title='Trajectory length distribution', ylabel='Count', xlabel='Length
          ylocator=(1, 1e1, 1e2, 1e3, 1e4), yformatter=['$10^0$', '$10^1$', '$10^2$', '$10^3$', '$10^4$'])
 ax.legend(h[::3], [str(x) for x in range(2003, 2021)][::3], loc='ur', ncols=1, order='F')
 
-fig.save('../figures/fig02_data_availability.pdf')
-fig.save('../figures/fig02_data_availability.png')
+fig.save('../figures/fig04_data_availability.pdf')
+fig.save('../figures/fig04_data_availability.png')
