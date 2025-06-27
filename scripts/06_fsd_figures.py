@@ -83,7 +83,7 @@ results_alt = pd.read_csv('../data/floe_tracker/ift_fsd_tables/ift_fsd_table_all
 alpha = 0.05
 dr = pd.date_range('2020-04-01', '2020-09-01', freq='1MS')
 
-fig, axs = pplt.subplots(ncols=3, nrows=2, span=False)
+fig, axs = pplt.subplots(ncols=3, nrows=2, span=False, sharex=False)
 for ax, comp in zip(axs[0,:], ['PL_v_TPL', 'PL_v_LN', 'LN_v_TPL']):
 
     # False discovery rate adjustment - more stringent p-value than alpha since we 
@@ -98,7 +98,7 @@ for ax, comp in zip(axs[0,:], ['PL_v_TPL', 'PL_v_LN', 'LN_v_TPL']):
                marker='o', facecolor='blue2', edgecolor='k')
     
     ax.format(ylabel='Log likelihood ratio', title=comp.replace('v', 'vs.').replace('_', ' '),
-              xlabel='', ylim=(-65, 65))
+              xlabel='', ylim=(-65, 65), xlocator=dr.dayofyear, xformatter=[d.strftime('%b') for d in dr])
     
     ax.format(urtitle='Favors ' + comp.split('_')[0],
               lrtitle='Favors ' + comp.split('_')[2])

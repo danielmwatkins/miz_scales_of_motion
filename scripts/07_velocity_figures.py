@@ -24,7 +24,7 @@ df_ift['datetime'] = pd.to_datetime(df_ift['datetime'].values)
 
 # Calculations
 # Length scale bins need area adjustment
-df_ift['area_adj_km2'] = (np.sqrt(df_ift.area) + 6)**2*.25*.25 # 6 pixel shift minimizes error against manual
+df_ift['area_adj_km2'] = (np.sqrt(df_ift.area) + 8)**2*.25*.25 # 6 pixel shift minimizes error against manual
 
 edge_bins = np.arange(0, 800, 25)
 df_ift['edge_bin'] = np.digitize(df_ift.edge_dist_km, bins=edge_bins)
