@@ -17,6 +17,7 @@ for file in os.listdir('../data/floe_tracker/ift_floe_property_tables/clean/'):
         floe_lib_clean[year] = pd.read_csv('../data/floe_tracker/ift_floe_property_tables/clean/' + file,
                                          index_col=0, dtype={'classification': str})
         floe_lib_clean[year]['datetime'] = pd.to_datetime(floe_lib_clean[year]['datetime'])
+
 df = pd.concat(floe_lib_clean).reset_index()
 # df = pd.read_csv(dataloc + 'ift_floe_properties.csv', parse_dates=True)
 # df['datetime'] = pd.to_datetime(df['datetime'].values)

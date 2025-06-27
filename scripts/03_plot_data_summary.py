@@ -1,3 +1,10 @@
+"""
+Produces the following figures:
+1. fig02_algorithm_example.pdf
+2. fig03_tracked_floes.pdf
+3. fig04_data_availability.pdf
+"""
+
 import cartopy.crs as ccrs
 import numpy as np
 import os
@@ -11,7 +18,6 @@ import warnings
 warnings.simplefilter('ignore')
 pplt.rc['cartopy.circular'] = False
 pplt.rc['reso'] = 'med'
-
 
 # Data ingest: shape properties and trajectories
 floe_lib_raw = {}
@@ -44,28 +50,26 @@ tc_images = {}
 df = pd.read_csv('../data/floe_tracker/ift_floe_properties.csv', index_col=0)
 df['datetime'] = pd.to_datetime(df['datetime'].values)
 
+df_area_val = pd.read_csv('../data/floe_tracker/ift_floe_properties_area_validation.csv', parse_dates=['datetime'])
+
 for date in ['2013-04-24 12:39:09', '2014-05-01 12:14:19']:
     date = pd.to_datetime(date)
-    ift_images[date] = skimage.io.imread('../data/modis_imagery/{d}.aqua.labeled_raw.250m.tiff'.format(d=date.strftime('%Y%m%d')))
-    ift_clean[date] = skimage.io.imread('../data/modis_imagery/{d}.aqua.labeled_clean.250m.tiff'.format(d=date.strftime('%Y%m%d')))
-    tc_images[date] = rio.open('../data/modis_imagery/{d}.aqua.truecolor.250m.tiff'.format(d=date.strftime('%Y%m%d'))).read()
+    ift_images[date] = skimage.io.imread(
+        '../data/validation_images/{d}/{d}.aqua.labeled_raw.250m.tiff'.format(
+            d=date.strftime('%Y%m%d')))
+    ift_clean[date] = skimage.io.imread(
+        '../data/validation_images/{d}/{d}.aqua.labeled_clean.250m.tiff'.format(
+            d=date.strftime('%Y%m%d')))
+    tc_images[date] = rio.open(
+        '../data/validation_images/{d}/{d}.aqua.truecolor.250m.tiff'.format(
+            d=date.strftime('%Y%m%d'))
+        ).read()
 
-    im_manual = skimage.io.imread('../data/validation_images/{d}.aqua.labeled_manual.png'.format(d=date.strftime('%Y%m%d')))
-    man_images[date] = skimage.measure.label(im_manual[:,:,0])
-    dataframes[date] = df.loc[df.datetime == date].reset_index(drop=True)
+    man_images[date] = skimage.io.imread(
+        '../data/validation_images/{d}/{d}.aqua.labeled_manual.png'.format(
+            d=date.strftime('%Y%m%d')))[:,:,0]
 
-    dataframes[date]['manual_label'] = np.nan
-    dataframes[date]['manual_area'] = np.nan
-    
-    for region in skimage.measure.regionprops(man_images[date]):
-        label = np.unique(ift_images[date][(ift_images[date] > 0) & (man_images[date] == region.label)])
-        if len(label) == 1:
-            dataframes[date].loc[dataframes[date].label == label[0], 'manual_label'] = region.label
-            dataframes[date].loc[dataframes[date].label == label[0], 'manual_area'] = region.area
-        
-
-
-############ Figure 1: Shape detection and area adjustment ################
+############ Figure 2: Shape detection and area adjustment ################
 fig, axs = pplt.subplots(ncols=3, nrows=2, share=False, sharex=False, spany=False)
 
 imdate = pd.to_datetime('2014-05-01 12:14:19')
@@ -73,26 +77,38 @@ overlap_floes = floe_lib_clean.loc[(floe_lib_clean.datetime.dt.year == 2014) & \
     (floe_lib_clean.floe_id != 'unmatched')].groupby('floe_id').filter(
         lambda x: imdate in x.datetime.values)
 
-date = '20140501'
-tc_image = rio.open('../data/modis_imagery/{d}.aqua.truecolor.250m.tiff'.format(d=date))
-fc_image = rio.open('../data/modis_imagery/{d}.aqua.falsecolor.250m.tiff'.format(d=date))
-pp_image = rio.open('../data/modis_imagery/{d}.aqua.preprocessed.250m.tiff'.format(d=date)).read().squeeze()
+ref = rio.open(
+    '../data/validation_images/{d}/{d}.aqua.truecolor.250m.tiff'.format(
+        d=imdate.strftime('%Y%m%d')))
 
-left, bottom, right, top = tc_image.bounds
+fc_images = {imdate: rio.open(
+        '../data/validation_images/{d}/{d}.aqua.falsecolor.250m.tiff'.format(
+            d=imdate.strftime('%Y%m%d'))
+        ).read()}
+
+lb_raw_image = rio.open(
+    '../data/validation_images/{d}/{d}.aqua.labeled_raw.250m.tiff'.format(
+        d=imdate.strftime('%Y%m%d'))).read()
+lb_clean_image = rio.open(
+    '../data/validation_images/{d}/{d}.aqua.labeled_clean.250m.tiff'.format(
+    d=imdate.strftime('%Y%m%d'))).read()
+
+pp_img = rio.open(
+    '../data/validation_images/{d}/{d}.aqua.preprocessed.250m.tiff'.format(
+    d=imdate.strftime('%Y%m%d'))).read().squeeze()
+
+left, bottom, right, top = ref.bounds
 left /= 1e6
 bottom /= 1e6
 right /= 1e6
 top /= 1e6
 
-for ax, image in zip([axs[0, 0], axs[0, 1]], [tc_image, fc_image]):
-    ax.imshow(reshape_as_image(image.read()), extent=[left, right, bottom, top])
-    
+for ax, image in zip([axs[0, 0], axs[0, 1]], [tc_images[imdate], fc_images[imdate]]):
+    ax.imshow(reshape_as_image(image), extent=[left, right, bottom, top])
     
 ax = axs[0, 2]
-ax.imshow(pp_image, cmap='mono_r', extent=[left, right, bottom, top])
+ax.imshow(pp_img, cmap='mono_r', extent=[left, right, bottom, top])
 
-lb_raw_image = rio.open('../data/modis_imagery/{d}.aqua.labeled_raw.250m.tiff'.format(d=date)).read()
-lb_clean_image = rio.open('../data/modis_imagery/{d}.aqua.labeled_clean.250m.tiff'.format(d=date)).read()
 ax.imshow(np.ma.masked_array(reshape_as_image(lb_raw_image),
                                 reshape_as_image(lb_raw_image)==0), color='sky blue', alpha=0.75, extent=[left, right, bottom, top])
 ax.imshow(np.ma.masked_array(reshape_as_image(lb_clean_image),
@@ -106,8 +122,6 @@ for ax in axs:
 axs.format(abc=True)
 for ax, title in zip(axs[0,:], ['True Color', 'False Color', 'Processed']):
     ax.format(title=title, ylabel='Y ($\\times 10^6$ m)', xlabel='X ($\\times 10^6$ m)')
-
-
 
 for ax, date in zip(axs[1,:], man_images):
     ax.imshow(reshape_as_image(tc_images[date]), extent=[left, right, bottom, top])
@@ -127,42 +141,27 @@ axs[1, 0].legend(h, ['Manual', 'IFT floes', 'IFT non-floes'], loc='ul', ncols=1,
 for ax in axs[1, 0:2]:
     ax.format(ylabel='Y ($\\times 10^6$ m)', xlabel='X ($\\times 10^6 m)$')
 
-### Print the MSE ###
-df_all = pd.concat(dataframes)
-df_all = df_all.loc[df_all.manual_area.notnull(),:]
-df_all['area_adj'] = (df_all['area'].values**0.5 + 6)**2
+idx = df_area_val.match_type == 'Good'
+A_ift = df_area_val['ift_area']
+A_man = df_area_val['manual_area']
+A_adj = (A_ift**0.5 + 8)**2
 
-area_init = df_all['area'] * 0.25**2
-area_ift = df_all['area_adj'] * 0.25**2
-area_man = df_all['manual_area'] * 0.25**2
-
-mse = np.sqrt(np.mean((area_init - area_man)**2))
-print('RMSE init:', np.round(mse, 3))
-
-mse = np.sqrt(np.mean((area_ift - area_man)**2))
-print('RMSE post:', np.round(mse, 3))
-
-
-for date in dataframes:
-    df_date = dataframes[date]
-    A_ift = df_date.loc[df_date.manual_area.notnull(), 'area'].values
-    A_man = df_date.loc[df_date.manual_area.notnull(), 'manual_area'].values
-    A_adj = (A_ift**0.5 + 6)**2
-    
-    # convert to km2
-    A_man *= 0.25**2
-    A_adj *= 0.25**2
-    A_ift *= 0.25**2
-    
-    axs[1, 2].scatter(A_man, A_ift, marker='.', color='gold')
-    axs[1, 2].scatter(A_man, A_adj, marker='+', color='b')
-axs[1, 2].format(ylim=(10, max(A_man)), xlim=(10, max(A_man)),
+# convert to km2
+A_man *= 0.25**2
+A_adj *= 0.25**2
+A_ift *= 0.25**2
+idx_all = df_area_val.final_classification
+axs[1, 2].scatter(A_man[idx_all], A_ift[idx_all], marker='.', color='light gray')
+axs[1, 2].scatter(A_man[idx_all], A_adj[idx_all], marker='+', color='light gray')
+axs[1, 2].scatter(A_man[idx], A_ift[idx], marker='.', color='gold')
+axs[1, 2].scatter(A_man[idx], A_adj[idx], marker='+', color='b')
+axs[1, 2].format(ylim=(10, max(A_man.dropna())), xlim=(10, max(A_man.dropna())),
                  yscale='log', xscale='log', xlabel='Manual', ylabel='Automatic', title='Area Adjustment')
-axs[1, 2].plot([0, max(A_man)], [0, max(A_man)], color='k', ls='--')
+axs[1, 2].plot([0, max(A_man.dropna())], [0, max(A_man.dropna())], color='k', ls='--')
 
 h = [axs[1, 2].plot([],[],marker=m, color=c, lw=lw, ls=ls, alpha=a)
              for a, m, c, lw, ls in zip([0.5, 1, 1], ['.', '+', ''], ['gold', 'b', 'k'], [0,0,1], ['', '', '--'])]
-axs[1, 2].legend(h, ['Raw', 'Adjusted', '1:1'], ncols=1, loc='ul')
+axs[1, 2].legend(h, ['Initial', 'Adjusted', '1:1'], ncols=1, loc='ul')
 
 fig.save('../figures/fig02_algorithm_example.pdf', dpi=300)
 fig.save('../figures/fig02_algorithm_example.png', dpi=300)

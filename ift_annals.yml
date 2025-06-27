@@ -4,6 +4,7 @@ channels:
   - defaults
 dependencies:
   - cartopy=0.21.1
+  - fionaß
   - jupyter
   - metpy
   - netcdf4
