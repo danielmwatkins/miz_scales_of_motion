@@ -39,7 +39,7 @@ fig, axs = pplt.subplots(ncols=3, width=8, aspect=1, spanx=False)
 for ax, log_bin, color in zip(axs, [2, 4, 6], ['b', 'b', 'b']):
     ax.imshow(reshape_as_image(tc_image.read()), extent=[left, right, bottom, top])
     ax.imshow(np.ma.masked_array(reshape_as_image(lb_clean_image),
-                             mask=reshape_as_image(lb_clean_image)==0), extent=[left, right, bottom, top], color='gold', alpha=0.9)
+                             mask=reshape_as_image(lb_clean_image)==0), extent=[left, right, bottom, top], color='tangerine', alpha=0.9)
 
     # could add step to get the label and color the floes at vertices!
     
@@ -68,7 +68,7 @@ for ax, log_bin, color in zip(axs, [2, 4, 6], ['b', 'b', 'b']):
     outlines = reshape_as_image(mask)[:,:,0] - skimage.morphology.erosion(reshape_as_image(mask)[:,:,0], skimage.morphology.disk(4))
     ax.pcolorfast(np.linspace(left, right, outlines.shape[1]),
                   np.linspace(top, bottom, outlines.shape[0]),
-                  np.ma.masked_array(outlines, mask=outlines == 0), color='r')
+                  np.ma.masked_array(outlines, mask=outlines == 0), color='k')
 
     # Plot the triangles
     for tri in plot_df.index:
@@ -76,8 +76,9 @@ for ax, log_bin, color in zip(axs, [2, 4, 6], ['b', 'b', 'b']):
                 plot_df.loc[tri, ['y1', 'y2', 'y3', 'y1']].astype(float).values/1e6, color=color, lw=1)
 
     lscale = plot_sel['L'].mean()
-    ax.text(xmin/1e6 + 0.01, ymin/1e6 + 0.01, text = 'L $\\approx$ ' + str(np.round(lscale, 1)) + ' km', color='b')
-    ax.format(ylabel='Y (km $\\times$ 1000)', xlabel='X (km $\\times$ 1000)')
+    ax.text(xmax/1e6 - 0.09, ymax/1e6 - 0.02, text = 'L $\\approx$ ' + str(np.round(lscale, 1)) + ' km', color='b')
+    ax.format(ylabel='Y ($\\times 10^6$ m)', xlabel='X ($\\times 10^6$ m)')
     ax.format(ylim=(ymin/1e6, ymax/1e6), xlim=(xmin/1e6, xmax/1e6))
 axs.format(abc=True)
-fig.save('../figures/fig09_polygon_example.png', dpi=300)
+fig.save('../figures/fig05_polygon_example.png', dpi=300)
+fig.save('../figures/fig05_polygon_example.pdf', dpi=300)

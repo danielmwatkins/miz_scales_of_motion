@@ -188,9 +188,4 @@ for year in ift_tracks:
             else:
                 ift_tracks[year] = pd.concat([ift_tracks[year],
                                               icemotion.drop(['u_nsidc', 'v_nsidc'], axis=1)], axis=1)
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> fe73f6d904461a2ff96dde2329077d1715182dcb
 pd.concat([ift_tracks[y] for y in ift_tracks]).to_csv(saveloc + 'ift_floe_trajectories.csv')

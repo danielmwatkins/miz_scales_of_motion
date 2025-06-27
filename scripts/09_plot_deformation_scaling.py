@@ -113,7 +113,7 @@ for ax, month, monthname in zip(axs, range(4, 7), ['April', 'May', 'June']):
     stdev = np.sqrt((np.exp(sigma**2)-1)*np.exp(2*mu + sigma**2))
     ax.plot(data_mean['L'].values, (np.exp(mu)*data_mean['L']**(-beta_mle)).values, label='', color='r', marker='^', ms=5, lw=1, zorder=5)
     ax.plot(data_mean['L'].values, (mean*data_mean['L']**(-beta_mle)).values, label='', color='r', marker='.', ms=5, lw=1, zorder=5)
-    ax.plot(data_mean['L'].values, (stdev*data_mean['L']**(-beta_mle)).values, label='', ls='--', color='r', marker='+', ms=5, lw=1, zorder=5)
+    # ax.plot(data_mean['L'].values, (stdev*data_mean['L']**(-beta_mle)).values, label='', ls='--', color='r', marker='+', ms=5, lw=1, zorder=5)
 
 
     
