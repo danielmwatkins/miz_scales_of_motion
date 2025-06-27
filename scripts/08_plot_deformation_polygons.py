@@ -80,5 +80,5 @@ for ax, log_bin, color in zip(axs, [2, 4, 6], ['b', 'b', 'b']):
     ax.format(ylabel='Y ($\\times 10^6$ m)', xlabel='X ($\\times 10^6$ m)')
     ax.format(ylim=(ymin/1e6, ymax/1e6), xlim=(xmin/1e6, xmax/1e6))
 axs.format(abc=True)
-fig.save('../figures/fig05_polygon_example.png', dpi=300)
-fig.save('../figures/fig05_polygon_example.pdf', dpi=300)
+fig.save('../figures/fig06_polygon_example.png', dpi=300)
+fig.save('../figures/fig06_polygon_example.pdf', dpi=300)
