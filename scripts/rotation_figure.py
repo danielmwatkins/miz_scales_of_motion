@@ -74,9 +74,9 @@ for q, lw, m in zip([0.99, 0.95, 0.75, 0.5],
     
 
     axs[0].plot(df_cyc.columns, df_cyc.quantile(q, axis=0).interpolate(),
-                color='b', lw=lw, marker='.', ls='-')
+                color='tab:blue', lw=lw, marker='.', ls='-')
     axs[1].plot(df_anticyc.columns, df_anticyc.quantile(q, axis=0).interpolate(),
-                color='b', lw=lw, ls='-', m='.')
+                color='tab:blue', lw=lw, ls='-', m='.')
 
     axs[0].plot(L, sim_rot.where(sim_rot > 0).quantile(q, axis=0).interpolate(),
                 color='k', lw=lw, ls='--', marker=m)
@@ -105,8 +105,9 @@ axs[1].format(title='Anticyclonic')
 l = ['Observation', 'Simulation',
      '99%', '95%', '75%', '50%']
 h = [axs[0].plot([],[],c=c, lw=lw, m='', ls=ls)
-     for c, lw, ls in zip(['b', 'gray', 'k', 'k', 'k', 'k'],
+     for c, lw, ls in zip(['tab:blue', 'gray', 'k', 'k', 'k', 'k'],
                          [2, 2, 0.5, 0.75, 1, 1.5], ['-', '--', '-', '-', '-', '-'])]
 axs[0].legend(h, l, ncols=1)
 fig.format(fontsize=12, abc=True)
 fig.save('../figures/fig13_rotation_rate_distribution.pdf', dpi=300)
+fig.save('../figures/fig13_rotation_rate_distribution.png', dpi=300)
