@@ -38,6 +38,37 @@ interior angle greater than 20 degrees. The polygon data is large - 1.15 GB - so
 `05_calculate_deformation.py` Calculates strain rates.  
 
 
+
+Figure 1: Map with sea ice extents for each year
+
+
+# scripts (updated)
+1. `00_plot_study_region.py` Generates Figure 1, a map with sea ice extent for each year and the bounding boxes for other figures.
+2. `01_pull_ift_data.py` Accesses data on the Brown server. Data can be downloaded directly from the Brown Digital Repository instead.
+3. `02_merge_external_data.py` Interpolates the NSIDC ice motion and sea ice concentration data to the IFT positions.
+4. `03_plot_data_summary.py` Generates Figure 2 (Example of algorithm steps and addressing the area bias), Figure 3 (tracked floes), and Figure 4 (Data availability, maps)
+5. `velocity_figures.py` Generates Fig 11 and Fig 12. TBD: Add scale vector to Fig 11.
+6. `rotation_figure.py` Generates Figure 13
+
+TBD: get scripts for FSD figures sorted out.
+
+
+Figure 5: Estimating the minimum for the FSD
+Figure 6: Examples of polygons for deformation
+Figure 7: Results of the likelihood ratio tests
+Figure 8: Snapshots of FSD pdfs and ccdfs
+Figure 9: Seasonality of the FSD
+Figure 10: Tracked vs all floes FSD pdfs and ccdfs
+Figure 11: Comparison with NSIDC ice motion vectors
+Figure 12: Distributions of perturbation velocities
+Figure 13: Rotation rate distribution
+Figure 14: Slope of the deformation rates as a function of polygon length scale
+
+
+
+
+
+
 # data
 `floe_tracker` folder contains `ift_with_era5.csv` which has the interpolated tracked floes with all the floe properties with wind speeds from ERA5 added in. `ift_with_nsidc.csv` is produced first; `ift_with_era5.csv` contains the same data but with the addition of the winds. The subfolder 
 `interpolated` has the files for each year as produced by script 2. The subfolder `parsed` has the full IFT data including non-tracked floes 
