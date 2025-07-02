@@ -67,7 +67,6 @@ diffs_u = {}
 diffs_v = {}
 
 for month in [4, 5, 6]:
-    # Not enough bins with > 30 vectors for statistics
     u_data[month] = {}
     v_data[month] = {}
     hist[month] = {}
@@ -130,8 +129,13 @@ for ax in axs:
     ax.format(land=True, coast=True, 
            landzorder=0, landcolor='k', facecolor='w')
 for ax in axs[:, -1]:
+    # scale arrow
+    # ax.text(0.91e6, -2.13e6, '200 km', color='k')     
+    ax.quiver(0.85e6 + 60e3, -2.0e6, 0.2, 0, color='k', scale=1, width=1/200, label='', transform=crs)
+    ax.text(0.91e6, -1.975e6, '20 cm/s', transform=crs)
+    # spatial scale
     ax.plot([0.85e6, 0.85e6 + 200e3], [-2.1e6, -2.1e6], lw=4, color='k', zorder=3, transform=crs)
-    ax.text(0.91e6, -2.13e6, '200 km', color='k')
+    ax.text(0.91e6, -2.07e6, '200 km', color='k', transform=crs)
     
 
 for col, month in zip([0, 1, 2], [4, 5, 6]):
@@ -153,6 +157,8 @@ for col, month in zip([0, 1, 2], [4, 5, 6]):
            transform=ccrs.PlateCarree(), cmap='reds', extend='max', N=7)
     axs[1, col].quiver(lon_grid, lat_grid, diffs_u[month].where(idx_data).T.values, diffs_v[month].where(idx_data).T.values,
                transform=ccrs.PlateCarree(), color='k', scale=1, width=1/300)
+
+    
         
 axs[0, col].colorbar(c0, loc='r', shrink=0.85, label='Count', labelsize=11)
 axs[1, col].colorbar(c1, loc='r', shrink=0.85, label='Vector Difference (m/s)', labelsize=11)
