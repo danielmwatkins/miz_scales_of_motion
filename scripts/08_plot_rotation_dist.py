@@ -22,9 +22,10 @@ warnings.simplefilter('ignore')
 ift_loc = '../data/floe_tracker/ift_floe_trajectories.csv'
 df_ift = pd.read_csv(ift_loc, index_col=0)
 df_ift['datetime'] = pd.to_datetime(df_ift['datetime'].values)
-df_ift['area_adj_km2'] = (np.sqrt(df_ift.area) + 6)**2*.25*.25 # 6 pixel shift
-edge_bins = np.arange(0, 800, 25)
-df_ift['edge_bin'] = np.digitize(df_ift.edge_dist_km, bins=edge_bins)
+df_ift['area_adj_km2'] = (np.sqrt(df_ift.area) + 8)**2*.25*.25 # 8 pixel shift and convert to km2
+
+# edge_bins = np.arange(0, 800, 25)
+# df_ift['edge_bin'] = np.digitize(df_ift.edge_dist_km, bins=edge_bins)
 
 
 df_ift['L'] = df_ift['area_adj_km2']**0.5
@@ -69,25 +70,26 @@ R = sim_rot.where(sim_rot > 0).quantile(0.99, axis=0).interpolate().index.astype
 L = np.sqrt(np.pi)*R
 
 for q, lw, m in zip([0.99, 0.95, 0.75, 0.5],
-                        [0.5, 0.75, 1, 1.5],
+                        [0.5, 1, 2, 3],
                    ['', '', '', '']):
     
 
-    axs[0].plot(df_cyc.columns, df_cyc.quantile(q, axis=0).interpolate(),
-                color='tab:blue', lw=lw, marker='.', ls='-')
-    axs[1].plot(df_anticyc.columns, df_anticyc.quantile(q, axis=0).interpolate(),
-                color='tab:blue', lw=lw, ls='-', m='.')
-
-    axs[0].plot(L, sim_rot.where(sim_rot > 0).quantile(q, axis=0).interpolate(),
-                color='k', lw=lw, ls='--', marker=m)
-    axs[0].area(L, sim_rot.where(sim_rot > 0).quantile(q, axis=0).interpolate(),
-               alpha=0.1, color='k')
+    axs[0].plot(L, sim_rot.where(sim_rot > 0).quantile(q, axis=0), #.interpolate(),
+                color='k', lw=lw, ls='--', marker=m, zorder=1)
+    axs[0].area(L, sim_rot.where(sim_rot > 0).quantile(q, axis=0), #.interpolate(),
+               alpha=0.1, color='k', zorder=0)
+    
+    axs[0].plot(df_cyc.columns, df_cyc.quantile(q, axis=0), #.interpolate(),
+                color='tab:blue', lw=lw, marker='.', ls='-', ms=4, zorder=2)
 
     
-    axs[1].plot(L, (-sim_rot.where(sim_rot < 0)).quantile(q, axis=0).interpolate(),
-                color='k', lw=lw, ls='--', marker=m)
-    axs[1].area(L, (-sim_rot.where(sim_rot < 0)).quantile(q, axis=0).interpolate(),
-               alpha=0.1, color='k')
+    axs[1].plot(L, (-sim_rot.where(sim_rot < 0)).quantile(q, axis=0),# .interpolate(),
+                color='k', lw=lw, ls='--', marker=m, zorder=1)
+    axs[1].area(L, (-sim_rot.where(sim_rot < 0)).quantile(q, axis=0),#.interpolate(),
+               alpha=0.1, color='k', zorder=0)
+
+    axs[1].plot(df_anticyc.columns, df_anticyc.quantile(q, axis=0), #.interpolate(),
+                color='tab:blue', lw=lw, ls='-', m='.', ms=4, zorder=2)
 
 axs[0].format(xlocator=np.arange(10, 51, 10),
           xlabel='Floe length scale (km)',
@@ -106,7 +108,7 @@ l = ['Observation', 'Simulation',
      '99%', '95%', '75%', '50%']
 h = [axs[0].plot([],[],c=c, lw=lw, m='', ls=ls)
      for c, lw, ls in zip(['tab:blue', 'gray', 'k', 'k', 'k', 'k'],
-                         [2, 2, 0.5, 0.75, 1, 1.5], ['-', '--', '-', '-', '-', '-'])]
+                         [2, 2, 0.5, 1, 2, 3], ['-', '--', '-', '-', '-', '-'])]
 axs[0].legend(h, l, ncols=1)
 fig.format(fontsize=12, abc=True)
 fig.save('../figures/fig13_rotation_rate_distribution.pdf', dpi=300)
