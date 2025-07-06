@@ -164,8 +164,8 @@ axs[0, col].colorbar(c0, loc='r', shrink=0.85, label='Count', labelsize=11)
 axs[1, col].colorbar(c1, loc='r', shrink=0.85, label='Vector Difference (m/s)', labelsize=11)
 axs.format(leftlabels = ['Mean Drift','Difference'],
            toplabels=['April', 'May', 'June'], fontsize=12, abc=True)
-fig.save('../figures/fig11_mean_velocity.png', dpi=300)
-fig.save('../figures/fig11_mean_velocity.pdf')
+fig.save('../figures/fig11_mean_drift.png', dpi=300)
+fig.save('../figures/fig11_mean_drift.pdf')
 
 
 
@@ -258,7 +258,8 @@ axs[1,0].legend(h, ['5D', '15D', '31D'], loc='ul', ncols=1)
 
 axs[0,0].format(title='', ylabel='Probability')
 axs[1,0].format(title='', ylabel='Probability')
-axs.format(xlabel='Velocity (m/s)', yscale='log', xlim=(-0.4, 0.4), ylim=(0.1, 13), abc=True)
+axs[0,0].format(xlabel='$u_L$ (m/s)', yscale='log', xlim=(-0.4, 0.4), ylim=(0.1, 13), abc=True)
+axs[1,0].format(xlabel='$u_T$ (m/s)', yscale='log', xlim=(-0.4, 0.4), ylim=(0.1, 13), abc=True)
 
 
 #### Fluctuating Velocity Distributions
