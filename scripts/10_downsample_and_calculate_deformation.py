@@ -76,7 +76,8 @@ all_results['vorticity'] = dvdx - dudy #vor
 all_results['pure_shear'] = dudy + dvdx #pure
 all_results['normal_shear'] = dudx - dvdy #normal
 all_results['maximum_shear_strain_rate'] = 0.5*np.sqrt((dudx - dvdy)**2 + (dudy + dvdx)**2)
-all_results['total_deformation'] = np.sqrt(all_results['divergence']**2 + all_results['maximum_shear_strain_rate']**2)
+all_results['total_deformation'] = np.sqrt(all_results['divergence']**2 + \
+                                           2*all_results['maximum_shear_strain_rate']**2)
 
 # Unique floes sample
 all_results['unique_floes_sample'] = False
