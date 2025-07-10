@@ -247,6 +247,10 @@ data = df.loc[(df.floe_id != 'unmatched')].area_adj_km
 fit = powerlaw.Fit(data,xmin=35, xmax=xmax)
 fit.plot_pdf(color='r', linewidth=2, ax=ax, label='Tracked only', ls='--')
 fit.plot_ccdf(color='r', linewidth=2, ax=ax, ls='--')
+
+ax.text(1020, 0.15, 'CCDF')
+ax.text(1020, 0.00015, 'PDF')
+
 ax.legend(loc='ll', ncols=1)
 ax.format(xlabel='Floe area (km$^2$)', ylabel='Probability')
 fig.save('../figures/fig10_all_floes_v_tracked_FSD.png')
