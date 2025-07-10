@@ -8,6 +8,7 @@ warnings.simplefilter("ignore", RuntimeWarning)
 # Define logarithmically spaced bins
 logbins = np.logspace(np.log(10), np.log(300), base=np.e, num=10)
 
+
 # Helper function for deformation
 def mean_accel(xcomp, ucomp, area, sign):
     """xcomp and ucomp input should be an N x 3 array. Different gradients will need
@@ -24,6 +25,55 @@ def mean_accel(xcomp, ucomp, area, sign):
         idx1 = (idx + 1) % nc
         total += (ucomp[:, idx1] + ucomp[:, idx])*(xcomp[:, idx1] - xcomp[:, idx])
     return 1/(2*area) * total * sign
+
+def polygon_area_uncertainty(X, Y, position_uncertainty):
+    """Compute the area uncertainty following Dierking et al. 2020"""
+    N = X.shape[1]
+    S = 0
+    for i in range(N):
+        # the modulus here makes the calculation wrap around to the beginning
+        # could adjust the other codes to do this too
+        S += (X[:, (i+1) % N] - X[:, (i-1) % N])**2 +  (Y[:, (i+1) % N] - Y[:, (i-1) % N])**2
+    return np.sqrt(0.25*position_uncertainty**2*S)
+
+def gradvel_uncertainty(X, Y, U, V, A, position_uncertainty, time_delta, vel_var='u', x_var='x'):
+    """Equation 19 from Dierking et al. 2020 assuming uncertainty in position is same in both x and y.
+    Also assuming that there is no uncertainty in time. Default returns standard deviation
+    uncertainty for dudx.
+    """
+    sigma_A = polygon_area_uncertainty(X, Y, position_uncertainty)
+    sigma_X = position_uncertainty
+    
+    # velocity uncertainty
+    if vel_var=='u':
+        u = U.copy()
+    else:
+        u = V.copy()
+    if x_var == 'x':
+        # If you want dudx, integrate over Y
+        x = Y.copy()
+    else:
+        x = X.copy()
+    
+    sigma_U = 2*sigma_X**2/time_delta**2
+    
+    
+    N = X.shape[1]
+    S1, S2, S3 = 0, 0, 0
+    for i in range(N):
+        # the modulus here makes the calculation wrap around to the beginning
+        # could adjust the other codes to do this too
+        S1 += (u[:, (i+1) % N] + u[:, (i-1) % N])**2 * (x[:, (i+1) % N] - x[:, (i-1) % N])**2
+        S2 += (x[:, (i+1) % N] - x[:, (i-1) % N])**2
+        S3 += (u[:, (i+1) % N] + u[:, (i-1) % N])**2
+        
+    var_ux = sigma_A**2/(4*A**4)*S1 + \
+             sigma_U**2/(4*A**2)*S2 + \
+             sigma_X**2/(4*A**2)*S3       
+    
+    return np.sqrt(var_ux)
+
+
 
 # Loading data
 data = []
@@ -71,6 +121,29 @@ dudy = mean_accel(xcoords, ucoords, area, -1)
 dvdx = mean_accel(ycoords, vcoords, area, 1)
 dvdy = mean_accel(xcoords, vcoords, area, -1)
 
+# from Lopez-Acosta et al. 2019
+position_uncertainty = 255
+time_delta = 24*60*60
+
+sigma_A = polygon_area_uncertainty(xcoords, ycoords, position_uncertainty)
+sigma_dudx = gradvel_uncertainty(xcoords, ycoords, ucoords, vcoords, area,
+                                 position_uncertainty, time_delta, vel_var='u', x_var='x')
+sigma_dvdx = gradvel_uncertainty(xcoords, ycoords, ucoords, vcoords, area,
+                                 position_uncertainty, time_delta, vel_var='v', x_var='x')
+sigma_dudy = gradvel_uncertainty(xcoords, ycoords, ucoords, vcoords, area,
+                                 position_uncertainty, time_delta, vel_var='u', x_var='y')
+sigma_dvdy = gradvel_uncertainty(xcoords, ycoords, ucoords, vcoords, area,
+                                 position_uncertainty, time_delta, vel_var='v', x_var='y')
+
+sigma_div = np.sqrt(sigma_dudx**2 + sigma_dvdy**2)
+sigma_vrt = np.sqrt(sigma_dvdx**2 + sigma_dudy**2)
+sigma_shr = np.sqrt((normal_shear/maximum_shear_strain_rate)**2 * (sigma_dudx**2 + sigma_dvdy**2) + \
+                    (pure_shear/maximum_shear_strain_rate)**2 * (sigma_dudy**2 + sigma_dvdx**2))
+sigma_tot = np.sqrt((maximum_shear_strain_rate/total_deformation)**2 * sigma_shr**2 + \
+                    (divergence/total_deformation)**2 * sigma_vrt**2)
+
+
+
 all_results['divergence'] = dudx + dvdy #div
 all_results['vorticity'] = dvdx - dudy #vor
 all_results['pure_shear'] = dudy + dvdx #pure
@@ -78,6 +151,14 @@ all_results['normal_shear'] = dudx - dvdy #normal
 all_results['maximum_shear_strain_rate'] = 0.5*np.sqrt((dudx - dvdy)**2 + (dudy + dvdx)**2)
 all_results['total_deformation'] = np.sqrt(all_results['divergence']**2 + \
                                            2*all_results['maximum_shear_strain_rate']**2)
+
+all_results['uncertainty_area'] = sigma_A,
+all_results['uncertainty_divergence'] = sigma_div,
+all_results['uncertainty_vorticity'] = sigma_vrt,
+all_results['uncertainty_shear'] = sigma_shr,
+all_results['uncertainty_total'] = sigma_tot,
+
+
 
 # Unique floes sample
 all_results['unique_floes_sample'] = False

@@ -145,7 +145,7 @@ for ax, month, monthname in zip(axs, range(4, 7), ['April', 'May', 'June']):
     # ax.format(lltitle='MLE: ' + mle_result + '\n' + 'LSQ: ' + lr_result, xreverse=False)
     ax.format(lltitle=mle_result)
     ax.format(yscale='log', xscale='log', ylim=(0.9e-3, 1.5), xlabel='Length scale (km)',
-              ylabel='Total deformation ($s^{-1}$)', xlim=(9, 150), title=monthname, xreverse=False)
+              ylabel='Total deformation (day$^{-1}$)', xlim=(9, 150), title=monthname, xreverse=False)
 
 h = [ax.plot([],[], c=c, lw=lw, m=m, ms=ms, ls=ls) for c, lw, m, ms, ls in zip(
                 ['blue3', 'k', 'blue8', 'blue8', 'blue8', 'r', 'r'],

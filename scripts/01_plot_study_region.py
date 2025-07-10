@@ -27,7 +27,7 @@ for c, b, ls in zip([c['color'] for c in pplt.Cycle("Dark2", 4)], bounds, ['-', 
              [top, top, bottom, bottom, top], label=b, transform=crs, ls=ls, lw=2, zorder=50, c=c)
 axs.plot([],[], color='blue4', label='April Extent')
 axs.plot([], [], color='red4', label='September Extent')
-axs.legend(alpha=1, ncols=1, loc='ll')
+axs.legend(alpha=1, ncols=1, loc='lr')
 
 
 # Open the shapefile

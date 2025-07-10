@@ -177,8 +177,8 @@ tc_images = {}
 floe_images = {}
 
 for date in plot_dates:
-    tc_images[date] = rio.open('../data/modis_imagery/{d}.aqua.truecolor.250m.tiff'.format(d=date.strftime('%Y%m%d')))
-    floe_images[date] = rio.open('../figures/images_for_example_ift/{d}.aqua.labeled_clean.250m.tiff'.format(d=date.strftime('%Y%m%d')))
+    tc_images[date] = rio.open('../data/example_images/{d}.aqua.truecolor.250m.tiff'.format(d=date.strftime('%Y%m%d')))
+    floe_images[date] = rio.open('../data/example_images/{d}.aqua.labeled_clean.250m.tiff'.format(d=date.strftime('%Y%m%d')))
 
 imdate = pd.to_datetime('2014-04-27 12:38:45')
 plot_floes = floe_lib_clean.loc[(floe_lib_clean.floe_id != 'unmatched') & (floe_lib_clean.datetime.dt.year == imdate.year)].groupby('floe_id').filter(lambda x: imdate in x.datetime.values)
@@ -346,6 +346,10 @@ for year, group in trajectories.groupby(trajectories.datetime.dt.year):
     n = group.groupby('floe_id').apply(lambda x: len(x), include_groups=False)
     x, bins = np.histogram(n, bins=np.arange(0.5, 20))
     xc = 0.5*(bins[1:] + bins[:-1])
+    idx = x > 0
+    x = x[idx]
+    xc = xc[idx]
+    
     h.append(ax.plot(xc[1:], x[1:], marker='.', color=colors[year]))
 ax.format(title='Trajectory length distribution', ylabel='Count', xlabel='Length (days)', yscale='log',
          ylocator=(1, 1e1, 1e2, 1e3, 1e4), yformatter=['$10^0$', '$10^1$', '$10^2$', '$10^3$', '$10^4$'])
