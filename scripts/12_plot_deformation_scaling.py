@@ -24,6 +24,7 @@ df['year'] = df['datetime'].dt.year
 rs = 32413
 n = 500
 samples = {4: [], 5: [], 6: []}
+# for (month, log_bin), group in df.loc[df['unique_floes_sample'], :].groupby(['month', 'log_bin']):         
 for (month, log_bin), group in df.loc[df['no_overlap_sample'], :].groupby(['month', 'log_bin']):         
     if len(group) >= n:
         if month in samples:
@@ -33,8 +34,7 @@ for (month, log_bin), group in df.loc[df['no_overlap_sample'], :].groupby(['mont
             # weight this by the number of observations per day within each bin
     else:
         pass
-        
-        # print(month, log_bin, len(group))
+
 for month in samples:
     samples[month] = pd.concat(samples[month], axis=0)
 
@@ -144,7 +144,7 @@ for ax, month, monthname in zip(axs, range(4, 7), ['April', 'May', 'June']):
     # Uncomment to show LSQ results
     # ax.format(lltitle='MLE: ' + mle_result + '\n' + 'LSQ: ' + lr_result, xreverse=False)
     ax.format(lltitle=mle_result)
-    ax.format(yscale='log', xscale='log', ylim=(0.9e-3, 1.5), xlabel='Length scale (km)',
+    ax.format(yscale='log', xscale='log', ylim=(0.005, 1.5), xlabel='Length scale (km)',
               ylabel='Total deformation (day$^{-1}$)', xlim=(9, 150), title=monthname, xreverse=False)
 
 h = [ax.plot([],[], c=c, lw=lw, m=m, ms=ms, ls=ls) for c, lw, m, ms, ls in zip(
@@ -159,3 +159,4 @@ h = [ax.plot([],[], c=c, lw=lw, m=m, ms=ms, ls=ls) for c, lw, m, ms, ls in zip(
 ax.legend(h, ['Observations', 'Mean', 'Median', '25-75%', '10-90%', 'MLE Mean', 'MLE Median'], ncols=1,loc='r')
 fig.save('../figures/fig14_deformation_scales.png', dpi=300)
 fig.save('../figures/fig14_deformation_scales.pdf', dpi=300)
+# fig.save('../figures/figS6_deformation_scales_unique_floes_sample.png', dpi=300)
