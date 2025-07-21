@@ -18,11 +18,10 @@ df = pd.read_csv('../data/deformation/sampled_results.csv', index_col=0, parse_d
 df['month'] = df['datetime'].dt.month
 df['year'] = df['datetime'].dt.year
 
-###### Calculating #######
-
+###### Calculating beta #######
 # Stratified sample by log bin
 rs = 32413
-n = 500
+n = 400 # Had done 500 before.
 samples = {4: [], 5: [], 6: []}
 # for (month, log_bin), group in df.loc[df['unique_floes_sample'], :].groupby(['month', 'log_bin']):         
 for (month, log_bin), group in df.loc[df['no_overlap_sample'], :].groupby(['month', 'log_bin']):         
@@ -62,8 +61,11 @@ for month in samples:
             mle_results.append(likelihood_results.idxmax())
         del likelihood_results
 
+      
         beta, a, r, p, err = linregress(np.log(resamp['L']), np.log(resamp['total_deformation']*24*60*60))
         ls_results.append(-beta)
+
+        # Also compute the variation of the bin means.
     
     q1_mle, q2_mle = np.quantile(np.array(mle_results), [0.025, 0.975])
     q1_ls, q2_ls = np.quantile(np.array(ls_results), [0.025, 0.975])
