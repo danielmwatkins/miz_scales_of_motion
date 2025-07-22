@@ -9,6 +9,9 @@ warnings.simplefilter("ignore", RuntimeWarning)
 # Define logarithmically spaced bins
 logbins = np.logspace(np.log(15), np.log(300), base=np.e, num=10)
 
+# Set to False if the overlapping unique floe polygon sample is not needed
+calc_unique_floes = True
+
 ###### Helper function for deformation ######
 def mean_accel(xcomp, ucomp, area, sign):
     """xcomp and ucomp input should be an N x 3 array. Different gradients will need
@@ -161,7 +164,6 @@ all_results['uncertainty_total'] = sigma_tot
 
 
 ###### Optional: Unique floes sample ######
-calc_unique_floes = False
 if calc_unique_floes:
     all_results['unique_floes_sample'] = False
     for date, date_group in all_results.groupby('datetime'):
@@ -239,39 +241,11 @@ columns = ['datetime', 'triangle_number', 'floe1', 'floe2', 'floe3', 'u1', 'u2',
            'area_km21', 'area_km22', 'area_km23', 'zeta1', 'zeta2', 'zeta3',
            'edge_dist_km1', 'edge_dist_km2', 'edge_dist_km3', 'coast_dist_km1',
            'coast_dist_km2', 'coast_dist_km3', 'polygon_area', 'min_angle', 'L', 'log_bin',
-           'divergence', 'vorticity', 'pure_shear', 'normal_shear', 'maximum_shear_strain_rate', 'total_deformation',
+           'divergence', 'vorticity', 'pure_shear', 'normal_shear',
+           'maximum_shear_strain_rate', 'total_deformation',
+           'uncertainty_area', 'uncertainty_divergence',
+           'uncertainty_vorticity', 'uncertainty_shear', 'uncertainty_total',
            'no_overlap_sample']
-
-# for date, date_group in all_results.groupby('datetime'):
-#     if date.day % 10 == 0:
-#         print(date)
-#     for bin_number, df_bin in date_group.groupby('log_bin'):
-#         polygons = []
-#         random_state = pd.to_datetime(date).year*1000 + pd.to_datetime(date).dayofyear + bin_number
-#         if len(df_bin) > 0:
-#             polygons = []
-#             row_keys = []
-#             # Shuffle the order then make a list of polygons and rows
-#             for row, data in df_bin.sample(frac=1, replace=False, random_state=random_state).iterrows():
-#                 polygons.append(Polygon([Point(x, y) for x, y in zip([data.x1, data.x2, data.x3],
-#                                                             [data.y1, data.y2, data.y3])]))
-#                 row_keys.append(row)
-            
-#         non_overlapping = []
-#         non_overlapping_rows = []
-#         for r, n, p in zip(row_keys[:-1], range(1, len(polygons)-1), polygons[:-1]):
-#             if not any(p.intersection(g).area > tol for g in non_overlapping):
-#                 non_overlapping.append(p)
-#                 non_overlapping_rows.append(r)  
-#         all_results.loc[non_overlapping_rows, 'no_overlap_sample'] = True
-
-# columns = ['datetime', 'triangle_number', 'floe1', 'floe2', 'floe3', 'u1', 'u2',
-#            'u3', 'v1', 'v2', 'v3', 'x1', 'x2', 'x3', 'y1', 'y2', 'y3',
-#            'area_km21', 'area_km22', 'area_km23', 'zeta1', 'zeta2', 'zeta3',
-#            'edge_dist_km1', 'edge_dist_km2', 'edge_dist_km3', 'coast_dist_km1',
-#            'coast_dist_km2', 'coast_dist_km3', 'polygon_area', 'min_angle', 'L', 'log_bin',
-#            'divergence', 'vorticity', 'pure_shear', 'normal_shear', 'maximum_shear_strain_rate', 'total_deformation',
-#            'no_overlap_sample', 'unique_floes_sample']
 
 if calc_unique_floes:
     all_results['sampled'] = all_results['no_overlap_sample'] | all_results['unique_floes_sample']

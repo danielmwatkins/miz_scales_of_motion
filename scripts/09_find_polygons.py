@@ -87,7 +87,8 @@ for year, ift_df in ift_data.groupby(ift_data.datetime.dt.year):
         all_triangles = [list(x) for x in itertools.combinations(df.index, 3)]
         keep = []
         for coords in all_triangles:
-            min_angle = check_shape(df.x_stere[coords].values, df.y_stere[coords].values, min_angle=20)
+            min_angle = check_shape(df.x_stere[coords].values,
+                                    df.y_stere[coords].values, min_angle=20)
             if min_angle >= 20:
                 A = area(df.x_stere[coords].values, df.y_stere[coords].values)
                 if A < 1:

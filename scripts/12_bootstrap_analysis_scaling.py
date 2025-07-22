@@ -1,11 +1,7 @@
 """Calculate the slopes and confidence intervals for the log-normal MLE method and for the linear regression method."""
-
-"""calculate the best-fit model parameters and uncertainty for the deformation scaling."""
-
 from scipy.optimize import curve_fit
 import scipy.stats as stats
 import pandas as pd
-import proplot as pplt
 import numpy as np
 import warnings
 warnings.simplefilter('ignore')
@@ -14,6 +10,9 @@ warnings.simplefilter('ignore')
 df = pd.read_csv('../data/deformation/sampled_results.csv', index_col=0, parse_dates=['datetime'])
 df['month'] = df['datetime'].dt.month
 df['year'] = df['datetime'].dt.year
+df['relative_error'] = df['uncertainty_total'] / df['total_deformation']
+df = df.loc[df.relative_error < 0.5].copy()
+df = df.loc[df.log_bin.between(1, 5)]
 
 ##### Helper functions ######
 def normal_log_likelihood(eps, L, beta):

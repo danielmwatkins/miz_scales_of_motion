@@ -8,7 +8,14 @@ import scipy.stats as stats
 df = pd.read_csv('../data/deformation/sampled_results.csv', index_col=0, parse_dates=['datetime'])
 df['month'] = df['datetime'].dt.month
 df['year'] = df['datetime'].dt.year
+df['relative_error'] = df['uncertainty_total'] / df['total_deformation']
+df = df.loc[df.log_bin.between(1, 5)]
 
+n_init = len(df)
+df = df.loc[df.relative_error < 0.5].copy()
+
+n_post = len(df)
+print('Filtering by relative error reduced number of samples from ', n_init, 'to', n_post)
 ###### Calculating beta #######
 # Stratified sample by log bin
 rs = 32413
@@ -27,8 +34,6 @@ for (month, log_bin), group in df.loc[df['no_overlap_sample'], :].groupby(['mont
 
 for month in samples:
     samples[month] = pd.concat(samples[month], axis=0)
-
-
 
 bs_table = pd.read_csv('../data/deformation/scaling_estimates.csv', index_col='month')
 

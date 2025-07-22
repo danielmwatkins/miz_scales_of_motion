@@ -18,6 +18,7 @@ df_full_date = df_full_res.loc[df_full_res.datetime == date_exact]
 # Load deformation data
 df = pd.read_csv('../data/deformation/sampled_results.csv', index_col=0)
 df['datetime'] = pd.to_datetime(df['datetime'])
+
 df_date = df.loc[df.datetime == date_interp]
 satellite = 'terra'
 tc_image = rio.open('../data/modis_imagery/{d}.{s}.truecolor.250m.tiff'.format(d=date_exact.strftime('%Y%m%d'), s=satellite))
@@ -36,7 +37,7 @@ xmax = xmin + (ymax - ymin)
 
 fig, axs = pplt.subplots(ncols=3, width=8, aspect=1, spanx=False)
 
-for ax, log_bin, color in zip(axs, [2, 4, 6], ['b', 'b', 'b']):
+for ax, log_bin, color in zip(axs, [1, 2, 4], ['b', 'b', 'b']):
     ax.imshow(reshape_as_image(tc_image.read()), extent=[left, right, bottom, top])
     ax.imshow(np.ma.masked_array(reshape_as_image(lb_clean_image),
                              mask=reshape_as_image(lb_clean_image)==0), extent=[left, right, bottom, top], color='tangerine', alpha=0.9)
