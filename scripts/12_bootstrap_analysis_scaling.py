@@ -12,7 +12,7 @@ df['month'] = df['datetime'].dt.month
 df['year'] = df['datetime'].dt.year
 df['relative_error'] = df['uncertainty_total'] / df['total_deformation']
 df = df.loc[df.relative_error < 0.5].copy()
-df = df.loc[df.log_bin.between(1, 5)]
+df = df.loc[df.log_bin.between(1, 8)]
 
 ##### Helper functions ######
 def normal_log_likelihood(eps, L, beta):
@@ -35,7 +35,7 @@ def rms(y, yfit):
     return np.sqrt(np.sum((y - yfit) ** 2))
 
 ##### Get stratified sample by log bin #####
-rs = 32413
+rs = 32413 + 200
 n = 400 # Had done 500 before.
 samples = {4: [], 5: [], 6: []}
 

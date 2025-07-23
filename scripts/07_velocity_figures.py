@@ -260,7 +260,7 @@ axs[0,0].format(title='', ylabel='Probability')
 axs[1,0].format(title='', ylabel='Probability')
 axs[0,0].format(xlabel='$u_L$ (m/s)', yscale='log', xlim=(-0.4, 0.4), ylim=(0.1, 13), abc=True)
 axs[1,0].format(xlabel='$u_T$ (m/s)', yscale='log', xlim=(-0.4, 0.4), ylim=(0.1, 13), abc=True)
-
+axs.format(abc=True)
 
 #### Fluctuating Velocity Distributions
 for ax, symb, var in zip([axs[0, 1], axs[1, 1]], ['d', '+'], ['U_along', 'U_fluctuating']):

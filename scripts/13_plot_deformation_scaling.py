@@ -9,7 +9,7 @@ df = pd.read_csv('../data/deformation/sampled_results.csv', index_col=0, parse_d
 df['month'] = df['datetime'].dt.month
 df['year'] = df['datetime'].dt.year
 df['relative_error'] = df['uncertainty_total'] / df['total_deformation']
-df = df.loc[df.log_bin.between(1, 5)]
+df = df.loc[df.log_bin.between(1, 8)]
 
 n_init = len(df)
 df = df.loc[df.relative_error < 0.5].copy()
@@ -111,16 +111,17 @@ for ax, month, monthname in zip(axs, range(4, 7), ['April', 'May', 'June']):
               ylabel='Total deformation (day$^{-1}$)', xlim=(14, 80), title=monthname, xreverse=False)
 
     h = [ax.plot([],[], c=c, lw=lw, m=m, ms=ms, ls=ls) for c, lw, m, ms, ls in zip(
-                    ['blue3', 'k', 'blue8', 'blue8', 'blue8', 'r', 'r'],
-                    [0, 1, 1, 1, 1, 1, 1],
-                    ['o', 'o', '^', '', '', 'o', '^'],
-                    [5, 5, 5, 0, 0, 5, 5],
-                    ['', '-', '-', '--', ':', '-', '-'])]
+                    ['blue3', 'k', 'k', 'blue8', 'blue8', 'blue8', 'r', 'r'],
+                    [0, 1, 1, 1, 1, 1, 1, 1],
+                    ['o', 'o', '', '^', '', '', 'o', '^'],
+                    [5, 5, 0, 5, 0, 0, 5, 5],
+                    ['', '-', '--', '-', '--', ':', '-', '-'])]
 
     
     ax.format(yscale='log', xscale='log', xlocator=[20, 30, 40, 50, 60, 70])
 
 # add custom legend
-ax.legend(h, ['Observations', 'Mean', 'Median', '25-75%', '10-90%', 'MLE Mean', 'MLE Median'], ncols=1,loc='r')
+ax.legend(h, ['Observations', 'Mean', 'LSQ Fit', 'Median', '25-75%', '10-90%', 'MLE Mean', 'MLE Median'], ncols=1,loc='r')
+axs.format(abc=True)
 fig.save('../figures/fig14_deformation_scales.png', dpi=300)
 fig.save('../figures/fig14_deformation_scales.pdf', dpi=300)
