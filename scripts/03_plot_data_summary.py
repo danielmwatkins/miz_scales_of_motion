@@ -281,7 +281,7 @@ fig, axs = pplt.subplots(width=8, height=6.5, proj={1: 'npstere', 2: 'npstere', 
                          proj_kw={'lon_0': -45}, ncols=3, nrows=2, hratios=[2, 1], share=False)
 axs.format(land=True, coast=True, landzorder=0, landcolor='k', facecolor='w')
 for ax in axs[0:3]:
-    ax.set_extent([0.2e6, 1.3e6, -2.15e6, -0.5e6], crs=crs)  
+    ax.set_extent([247326, 1115678, -635759, -2089839], crs=crs)  
     ax.plot([0.3e6, 0.3e6 + 200e3], [-2.05e6, -2.05e6], lw=4, color='w', zorder=3, transform=crs)
     ax.text(0.3e6, -2.05e6, '200 km', color='w')
 

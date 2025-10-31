@@ -24,11 +24,12 @@ axs.set_extent([-0.5e6, 1.7e6, -3.15e6, -0.5e6], crs=crs)
 for c, b, ls in zip([c['color'] for c in pplt.Cycle("Dark2", 4)], bounds, ['-', '-', '-', '--']):
     left, right, top, bottom = bounds[b]
     axs.plot([left, right, right, left, left],
-             [top, top, bottom, bottom, top], label=b, transform=crs, ls=ls, lw=2, zorder=50, c=c)
+             [top, top, bottom, bottom, top], label='', transform=crs, ls=ls, lw=2, zorder=50, c=c)
+    axs.hist([], histtype='step', color=c, lw=2, ls=ls, label=b)
+
 axs.plot([],[], color='blue4', label='April Extent')
 axs.plot([], [], color='red4', label='September Extent')
-axs.legend(alpha=1, ncols=1, loc='lr')
-
+axs.legend(alpha=1, ncols=1, loc='lr', lw=1)
 
 # Open the shapefile
 for year in range(2003, 2021):
@@ -43,6 +44,6 @@ for year in range(2003, 2021):
                      pd.Series(y).rolling(3, center=True).mean(),
                      transform=crs, color=color, lw=2, zorder=z, alpha=0.5)
 
+for imtype in ['png', 'pdf']:
+    fig.save("../figures/fig01_study_region.{im}".format(im=imtype), dpi=300)
 
-fig.save("../figures/fig01_study_region.png", dpi=300)
-fig.save("../figures/fig01_study_region.pdf", dpi=300)
