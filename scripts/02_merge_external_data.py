@@ -2,9 +2,7 @@
 * 5-day centered time mean for NSIDC data
 * 1-day centered time mean wind velocity
 * Estimated distance to ice edge
-
-TBD: Add ERA5 wind data as well.
-TBD: Describe the saved NSIDC data so that others can run this."""
+"""
 
 import os
 import numpy as np
