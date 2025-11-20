@@ -1,4 +1,4 @@
-import proplot as pplt
+import ultraplot as pplt
 import pandas as pd
 from shapely.geometry import shape
 import fiona
