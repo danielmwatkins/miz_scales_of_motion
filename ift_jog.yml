@@ -1,20 +1,20 @@
-name: ift_annals
+name: ift_jog
 channels:
   - conda-forge
   - defaults
 dependencies:
-  - cartopy=0.21.1
-  - fionaß
+  - cartopy
+  - fiona
   - jupyter
   - metpy
   - netcdf4
   - numpy
   - pandas
   - powerlaw
-  - proplot=0.9.7
-  - python=3.9.13
+  - ultraplot
+  - python
   - rasterio
   - scipy
   - scikit-image
   - xarray
-prefix: /opt/miniconda3/envs/ift_annals
+prefix: /opt/miniconda3/envs/ift_jog
