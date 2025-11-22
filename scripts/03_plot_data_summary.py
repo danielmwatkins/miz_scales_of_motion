@@ -118,7 +118,7 @@ h = [ax.plot([],[], color=c, alpha=a, lw=0, marker='s') for c, a in zip(['sky bl
 
 ax.legend(h, ['Non-floes', 'Floes', 'Masked'], loc='ll', ncols=1, alpha=1)  
 for ax in axs:
-    ax.format(ylim=(-2, -1.5), xlim=(0.6, 1.1))
+    ax.format(ylim=(-2, -1.5), xlim=(0.6, 1.1)) # compare with fig 3
 axs.format(abc=True)
 for ax, title in zip(axs[0,:], ['True Color', 'False Color', 'Processed']):
     ax.format(title=title, ylabel='Y ($\\times 10^6$ m)', xlabel='X ($\\times 10^6$ m)')
@@ -132,7 +132,9 @@ for ax, date in zip(axs[1,:], man_images):
     ax.pcolorfast(np.linspace(left, right, outlines.shape[1]),
                   np.linspace(top, bottom, outlines.shape[0]),
                   np.ma.masked_array(outlines, mask=outlines == 0), color='b')
-    ax.format(xlim=(0.75, 0.95), ylim=(-1.6, -1.4), xtickminor=False, ytickminor=False, xlocator=0.1, ylocator=0.1,
+    # ax.format(xlim=(0.75, 0.95), ylim=(-1.6, -1.4), xtickminor=False, ytickminor=False, xlocator=0.1, ylocator=0.1,
+    #           title=date.strftime('%Y-%m-%d'), yreverse=False)
+    ax.format(xlim=(0.75, 0.95), ylim=(-1.8, -1.6), xtickminor=False, ytickminor=False, xlocator=0.1, ylocator=0.1,
               title=date.strftime('%Y-%m-%d'), yreverse=False)
 
 h = [ax.plot([],[], ls=ls, m=m, lw=lw, color=c) for lw, c, ls, m in zip([1, 3, 3], ['b', 'tangerine', 'sky blue'], ['-', '', ''], ['', 's', 's'])]
@@ -156,7 +158,7 @@ axs[1, 2].scatter(A_man[idx_all], A_adj[idx_all], marker='+', color='light gray'
 axs[1, 2].scatter(A_man[idx], A_ift[idx], marker='.', color='gold')
 axs[1, 2].scatter(A_man[idx], A_adj[idx], marker='+', color='b')
 axs[1, 2].format(ylim=(10, max(A_man.dropna())), xlim=(10, max(A_man.dropna())),
-                 yscale='log', xscale='log', xlabel='Manual', ylabel='Automatic', title='Area Adjustment')
+                 yscale='log', xscale='log', xlabel='Manual Area (km$^2$)', ylabel='IFT Area (km$^2$)', title='Area Adjustment')
 axs[1, 2].plot([0, max(A_man.dropna())], [0, max(A_man.dropna())], color='k', ls='--')
 
 h = [axs[1, 2].plot([],[],marker=m, color=c, lw=lw, ls=ls, alpha=a)
@@ -166,7 +168,7 @@ axs[1, 2].legend(h, ['Initial', 'Adjusted', '1:1'], ncols=1, loc='ul')
 fig.save('../figures/fig02_algorithm_example.pdf', dpi=300)
 fig.save('../figures/fig02_algorithm_example.png', dpi=300)
 
-######## Figure 2: Trajectory example ########
+######## Figure 3: Trajectory example ########
 
 # Dates with multiple tracked floes, all from the Aqua satellite
 plot_dates = [pd.to_datetime(x) for x in ['2014-04-27 12:38:45', '2014-04-28 11:43:40',
@@ -236,7 +238,7 @@ fig.save('../figures/fig03_tracked_floes.png', dpi=300)
 fig.save('../figures/fig03_tracked_floes.pdf', dpi=300)
 pplt.close(fig)
 
-######## Figure 3: Summary of data availability
+######## Figure 4: Summary of data availability
 import cartopy.crs as ccrs
 import warnings
 warnings.simplefilter('ignore')
