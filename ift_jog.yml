@@ -1,0 +1,20 @@
+name: ift_jog
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - cartopy
+  - fiona
+  - jupyter
+  - metpy
+  - netcdf4
+  - numpy
+  - pandas
+  - powerlaw
+  - ultraplot
+  - python
+  - rasterio
+  - scipy
+  - scikit-image
+  - xarray
+prefix: /opt/miniconda3/envs/ift_jog

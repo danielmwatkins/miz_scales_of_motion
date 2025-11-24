@@ -125,17 +125,18 @@ fig, axs = pplt.subplots(width=8, proj='npstere',
                          proj_kw={'lon_0': -45}, ncols=3, nrows=2, share=False)
 
 for ax in axs:
-    ax.set_extent([0.4e6, 1.1e6, -2.15e6, -0.7e6], crs=crs)  
+    ax.set_extent([0.4e6, 1.1e6, -2.1e6, -0.78e6], crs=crs)  
     ax.format(land=True, coast=True, 
            landzorder=0, landcolor='k', facecolor='w')
 for ax in axs[:, -1]:
     # scale arrow
-    # ax.text(0.91e6, -2.13e6, '200 km', color='k')     
-    ax.quiver(0.85e6 + 60e3, -2.0e6, 0.2, 0, color='k', scale=1, width=1/200, label='', transform=crs)
-    ax.text(0.91e6, -1.975e6, '20 cm/s', transform=crs)
+    
+    shift_up = 0.05e6
+    ax.quiver(0.85e6 + 60e3, -2.0e6 + shift_up, 0.2, 0, color='k', scale=1, width=1/200, label='', transform=crs)
+    ax.text(0.91e6, -1.975e6 + shift_up, '20 cm/s', transform=crs)
     # spatial scale
-    ax.plot([0.85e6, 0.85e6 + 200e3], [-2.1e6, -2.1e6], lw=4, color='k', zorder=3, transform=crs)
-    ax.text(0.91e6, -2.07e6, '200 km', color='k', transform=crs)
+    ax.plot([0.85e6, 0.85e6 + 200e3], [-2.1e6 + shift_up, -2.1e6 + shift_up], lw=4, color='k', zorder=3, transform=crs)
+    ax.text(0.91e6, -2.07e6 + shift_up, '200 km', color='k', transform=crs)
     
 
 for col, month in zip([0, 1, 2], [4, 5, 6]):
@@ -156,12 +157,12 @@ for col, month in zip([0, 1, 2], [4, 5, 6]):
     c1 = axs[1, col].pcolor(lon_grid, lat_grid, diffs_mean[month].where(idx_data).T.values, vmin=0, vmax=0.3,
            transform=ccrs.PlateCarree(), cmap='reds', extend='max', N=7)
     axs[1, col].quiver(lon_grid, lat_grid, diffs_u[month].where(idx_data).T.values, diffs_v[month].where(idx_data).T.values,
-               transform=ccrs.PlateCarree(), color='k', scale=1, width=1/300)
+               transform=ccrs.PlateCarree(), color='k', scale=1, width=1/200)
 
     
         
 axs[0, col].colorbar(c0, loc='r', shrink=0.85, label='Count', labelsize=11)
-axs[1, col].colorbar(c1, loc='r', shrink=0.85, label='Vector Difference (m/s)', labelsize=11)
+axs[1, col].colorbar(c1, loc='r', shrink=0.85, label='Absolute Difference (m/s)', labelsize=11)
 axs.format(leftlabels = ['Mean Drift','Difference'],
            toplabels=['April', 'May', 'June'], fontsize=12, abc=True)
 fig.save('../figures/fig11_mean_drift.png', dpi=300)
@@ -229,7 +230,7 @@ for tau, ls in zip(['5D', '15D', '31D'], ['-', '--', ':']):
             label = ''
             
         axs[0, 0].plot(x_center, u_pdf, color=color, label=label, ls=ls)
-        axs[1, 0].plot(x_center, v_pdf, color=color, label=label, ls=ls)
+        axs[0, 1].plot(x_center, v_pdf, color=color, label=label, ls=ls)
     comp = df_ift.copy()
     comp['u'] = comp['u'] - comp['u_nsidc']
     comp['v'] = comp['v'] - comp['v_nsidc']
@@ -247,23 +248,23 @@ for tau, ls in zip(['5D', '15D', '31D'], ['-', '--', ':']):
         label = ''
         
     axs[0, 0].plot(x_center, u_pdf, color='tab:blue', label=label, ls=ls, lw=1)
-    axs[1, 0].plot(x_center, v_pdf, color='tab:blue', label=label, ls=ls, lw=1)
+    axs[0, 1].plot(x_center, v_pdf, color='tab:blue', label=label, ls=ls, lw=1)
 
 axs[0, 0].legend(loc='ul', ncols=1)
 # axs[1, 0].legend(loc='ul', ncols=1)
 
 h = [axs[0,0].plot([],[], lw=1, color='gray', ls=ls) for ls in ['-', '--', ':']]
 # axs[0,0].legend(h, ['5D', '15D', '31D'], loc='ur', ncols=1)
-axs[1,0].legend(h, ['5D', '15D', '31D'], loc='ul', ncols=1)
+axs[0,1].legend(h, ['5D', '15D', '31D'], loc='ul', ncols=1)
 
 axs[0,0].format(title='', ylabel='Probability')
-axs[1,0].format(title='', ylabel='Probability')
+axs[0,1].format(title='', ylabel='Probability')
 axs[0,0].format(xlabel='$u_L$ (m/s)', yscale='log', xlim=(-0.4, 0.4), ylim=(0.1, 13), abc=True)
-axs[1,0].format(xlabel='$u_T$ (m/s)', yscale='log', xlim=(-0.4, 0.4), ylim=(0.1, 13), abc=True)
+axs[0,1].format(xlabel='$u_T$ (m/s)', yscale='log', xlim=(-0.4, 0.4), ylim=(0.1, 13), abc=True)
 axs.format(abc=True)
 
 #### Fluctuating Velocity Distributions
-for ax, symb, var in zip([axs[0, 1], axs[1, 1]], ['d', '+'], ['U_along', 'U_fluctuating']):
+for ax, symb, var in zip([axs[1, 0], axs[1, 1]], ['d', '+'], ['U_along', 'U_fluctuating']):
     ustd = df_comp[var].std()
     u = df_comp[var]
     print(tau, var, np.round(ustd*100, 3), 'cm/s')   
@@ -304,19 +305,19 @@ for col in sim_ualong.columns:
         label='Simulated'
     else:
         label=''
-    axs[0, 1].scatter(sim_ualong.index, sim_ualong.loc[:, col]/dx, color='gray',
+    axs[1, 0].scatter(sim_ualong.index, sim_ualong.loc[:, col]/dx, color='gray',
                 m='d', alpha=0.25, label=label, zorder=0)
     axs[1, 1].scatter(sim_uacross.index, sim_uacross.loc[:, col]/dx, color='gray',
                 alpha=0.25, m='+',  label=label, zorder=0)
     
-axs[0, 1].format(title='', xlabel='$u\'_L$ (m/s)/$\sigma_{u\'_L}$',
+axs[1, 0].format(title='', xlabel='$u\'_L$ (m/s)/$\sigma_{u\'_L}$',
               yscale='log', ylim=(1e-4, 1.2), xlim=(-7, 7),
               yformatter='log', ylabel='PDF')
 axs[1, 1].format(title='', xlabel='$u\'_T$ (m/s)/$\sigma_{u\'_T}$',
               yscale='log', ylim=(1e-4, 1.2), xlim=(-7, 7),
               yformatter='log', ylabel='PDF')
 
-axs[0, 1].legend(ncols=1)
+axs[1, 0].legend(ncols=1)
 axs[1, 1].legend(ncols=1)
 
 # Length scale dependence, for length scales with at least 300 observations
