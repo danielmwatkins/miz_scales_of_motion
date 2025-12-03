@@ -25,7 +25,7 @@ df['year'] = df.datetime.dt.year
 #### Example dates and year-to-year variability ####
 fig, axs = pplt.subplots(width=7, ncols=2, nrows=2, span=False)
 
-xmax = None
+xmax = 90e3
 xmin = 41
 
 for ax, example_date in zip(axs, [pd.to_datetime('2017-04-03T13:55:35'),
@@ -39,7 +39,7 @@ for ax, example_date in zip(axs, [pd.to_datetime('2017-04-03T13:55:35'),
         data = group.loc[(group.datetime.dt.dayofyear == example_date.dayofyear) & (group.satellite == satellite), 'area_adj_km']
         
         if len(data) > 100:
-            fit = powerlaw.Fit(data,xmin=35, xmax=xmax)
+            fit = powerlaw.Fit(data,xmin=xmin, xmax=xmax)
             fit.plot_pdf(color='gray', linewidth=1, alpha=0.5, ax=ax)
             fit.plot_ccdf(color='gray', linewidth=1, alpha=0.5, ax=ax)
             n += 1
@@ -57,7 +57,7 @@ for ax, example_date in zip(axs, [pd.to_datetime('2017-04-03T13:55:35'),
 
     
     data=df.loc[df.datetime == example_date].area_adj_km
-    fit = powerlaw.Fit(data,xmin=35, xmax=xmax)
+    fit = powerlaw.Fit(data,xmin=xmin, xmax=xmax)
     alpha_one = np.round(fit.truncated_power_law.alpha,2)
     se_one = np.round((alpha_one - 1)/np.sqrt(len(data)),2)
     ax.text(1100, 0.5,'$\\alpha$ = ' + str(alpha_one) + ' $\\pm$' + str(se_one), color='b')
@@ -74,10 +74,6 @@ for ax, example_date in zip(axs, [pd.to_datetime('2017-04-03T13:55:35'),
     ax.text(150, 0.4, 'CCDF')
     ax.text(150, 0.004, 'PDF')
 
-
-    # ax.text(750,.55,'xmin = '+str(fit.xmin)+' km$^2$')
-    # ax.text(750,.3,'xmax = '+str(np.round(np.amax(data),0))+' km$^2$')
-    # ax.text(750,.18,'N = '+str(len(data[data > fit.xmin])))
     h = [ax.plot([],[],color=c, lw=lw, ls=ls) for c, lw, ls in zip(['b', 'b',  'k', 'k', 'gray'],
                                                                    [2, 1, 2, 1, 2, 1],
                                                                    ['-', '--', '-', '--', '-', '-'])]

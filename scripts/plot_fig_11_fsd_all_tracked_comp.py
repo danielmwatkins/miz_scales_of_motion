@@ -23,26 +23,27 @@ df['year'] = df.datetime.dt.year
 
 #### Show tracked floes vs all floes ####
 fig, ax = pplt.subplots(width=4)
-xmax=90000
+xmin = 41
+xmax= 90e3
 for year, group in df.groupby(df.datetime.dt.year):
     data = group.area_adj_km
-    fit = powerlaw.Fit(data,xmin=35, xmax=xmax)
+    fit = powerlaw.Fit(data,xmin=xmin, xmax=xmax)
     fit.plot_pdf(color='k', linewidth=0.7, ax=ax, label='', alpha=0.3)
     fit.plot_ccdf(color='k', linewidth=0.7, ax=ax, alpha=0.3)
 data = df.area_adj_km
-fit = powerlaw.Fit(data,xmin=35, xmax=xmax)
+fit = powerlaw.Fit(data,xmin=xmin, xmax=xmax)
 fit.plot_pdf(color='k', linewidth=2, ax=ax, label='All floes')
 fit.plot_ccdf(color='k', linewidth=2, ax=ax)
 
 for year, group in df.loc[(df.floe_id != 'unmatched')].groupby(
                 df.loc[(df.floe_id != 'unmatched')].datetime.dt.year):
     data = group.area_adj_km
-    fit = powerlaw.Fit(data,xmin=35, xmax=xmax)
+    fit = powerlaw.Fit(data,xmin=xmin, xmax=xmax)
     fit.plot_pdf(color='r', linewidth=0.7, ax=ax, label='', alpha=0.3, ls='--')
     fit.plot_ccdf(color='r', linewidth=0.7, ax=ax, alpha=0.3, ls='--')
 
 data = df.loc[(df.floe_id != 'unmatched')].area_adj_km
-fit = powerlaw.Fit(data,xmin=35, xmax=xmax)
+fit = powerlaw.Fit(data,xmin=xmin, xmax=xmax)
 fit.plot_pdf(color='r', linewidth=2, ax=ax, label='Tracked only', ls='--')
 fit.plot_ccdf(color='r', linewidth=2, ax=ax, ls='--')
 
