@@ -1,7 +1,3 @@
-# TBD
-# Set up tests for each function
-# Set up shape-check and order-check
-
 import pandas as pd
 import numpy as np
 import pyproj

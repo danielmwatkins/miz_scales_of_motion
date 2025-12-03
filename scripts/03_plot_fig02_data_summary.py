@@ -1,8 +1,6 @@
 """
 Produces the following figures:
 1. fig02_algorithm_example.pdf
-2. fig03_tracked_floes.pdf
-3. fig04_data_availability.pdf
 """
 
 import cartopy.crs as ccrs

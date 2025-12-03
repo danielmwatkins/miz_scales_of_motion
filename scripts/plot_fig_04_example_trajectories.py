@@ -1,8 +1,6 @@
 """
-Produces the following figures:
-1. fig02_algorithm_example.pdf
-2. fig03_tracked_floes.pdf
-3. fig04_data_availability.pdf
+Produces the following figure:
+fig04_tracked_floes.pdf
 """
 
 import cartopy.crs as ccrs
@@ -111,6 +109,8 @@ for ax, date in zip(axs,plot_dates):
             
     ax.format(ylim=(-100, 100), xlim=(-100, 100), title=date.strftime("%Y-%m-%d %H:%M"), ylabel='Y (km)', xlabel='X (km)')
 axs.format(abc=True)
-fig.save('../figures/fig03_tracked_floes.png', dpi=300)
-fig.save('../figures/fig03_tracked_floes.pdf', dpi=300)
-# pplt.close(fig)
+
+for imtype in ['png', 'pdf']:
+    fig.save('../figures/fig04_tracked_floes.{im}'.format(im=imtype), dpi=300)
+
+

@@ -1,8 +1,6 @@
 """
 Produces the following figures:
-1. fig02_algorithm_example.pdf
-2. fig03_tracked_floes.pdf
-3. fig04_data_availability.pdf
+1. fig03_algorithm_example.pdf
 """
 
 import cartopy.crs as ccrs
@@ -179,5 +177,5 @@ h = [ax.plot([],[],marker=m, color=c, lw=lw, ls=ls, alpha=a)
 ax.legend(h, ['Initial', 'Adjusted', '1:1'], ncols=1, loc='ul')
 
 for imtype in ['png', 'pdf']:
-    fig.save('../figures/fig02_algorithm_example.{im}'.format(im=imtype), dpi=300)
+    fig.save('../figures/fig03_algorithm_example.{im}'.format(im=imtype), dpi=300)
 
