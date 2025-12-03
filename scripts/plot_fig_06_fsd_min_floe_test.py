@@ -67,7 +67,6 @@ h = []
 for alpha, ls, m in zip([1, 0.5, 0.25], ['-', '', ''], ['', 's', 's']):
     h.append(ax.plot([],[],color='tab:blue', alpha=alpha, ls=ls, m=m))
 axs[3].legend(h, ['Median', '25-75%', '10-90%'], ncols=1, loc='ur')
-axs[3].legend(h, ['Median', '25-75%', '10-90%'], ncols=1, loc='ur')
 
 axs.format(abc=True, fontsize=12)
 fig.save('../figures/fig06_fsd_setup_figures.pdf', dpi=300)
