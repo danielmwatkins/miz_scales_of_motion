@@ -177,7 +177,9 @@ for year in ift_tracks:
                                             'day': ds['time'].dt.day})),
                                    'x': (('x', ), ds['x'].data), 
                                    'y': (('y', ), ds['y'].data)})
-    
+
+        #### Option: Add spatial average to include 
+        
         for time in [5, 15, 31]:
             icemotion = icemotion_along_track(ift_tracks[year], ds_new, dt_days=time)
             icemotion.index = ift_tracks[year].index
