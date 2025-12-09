@@ -149,6 +149,6 @@ for year, group in trajectories.groupby(trajectories.datetime.dt.year):
 ax.format(title='Trajectory length distribution', ylabel='Count', xlabel='Length (days)', yscale='log',
          ylocator=(1, 1e1, 1e2, 1e3, 1e4), yformatter=['$10^0$', '$10^1$', '$10^2$', '$10^3$', '$10^4$'])
 ax.legend(h[::3], [str(x) for x in range(2003, 2021)][::3], loc='ur', ncols=1, order='F')
+for imtype in ['png', 'pdf']:
+    fig.save('../figures/{im}/fig05_data_availability.{im}'.format(im=imtype)', dpi=300)
 
-fig.save('../figures/fig05_data_availability.pdf')
-fig.save('../figures/fig05_data_availability.png')

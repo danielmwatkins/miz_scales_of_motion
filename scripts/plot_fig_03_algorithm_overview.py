@@ -177,5 +177,5 @@ h = [ax.plot([],[],marker=m, color=c, lw=lw, ls=ls, alpha=a)
 ax.legend(h, ['Initial', 'Adjusted', '1:1'], ncols=1, loc='ul')
 
 for imtype in ['png', 'pdf']:
-    fig.save('../figures/fig03_algorithm_example.{im}'.format(im=imtype), dpi=300)
+    fig.save('../figures/{im}/fig03_algorithm_example.{im}'.format(im=imtype), dpi=300)
 

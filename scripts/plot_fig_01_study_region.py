@@ -11,9 +11,8 @@ pplt.rc['cartopy.circular'] = False
 pplt.rc['reso'] = 'med'
 
 bounds = {'Study Region': [247326, 1115678, -635759, -2089839],
-          'Fig. 2 (a-c)': [0.6e6, 1.1e6, -1.5e6, -2e6],
-          'Fig. 2 (d-e)': [0.75e6, 0.95e6, -1.4e6, -1.6e6],
-          'Fig. 3': [0.75e6, 0.95e6, -1.6e6, -1.8e6]}
+          'Fig. 2 (a-f)': [0.6e6, 1.1e6, -1.5e6, -2e6],
+          'Fig. 3': [0.75e6, 0.95e6, -1.6e6, -1.8e6]} # Update with new figure
 
 crs = ccrs.NorthPolarStereo(central_longitude=-45, true_scale_latitude=70)
 fig, axs = pplt.subplots(width=4, proj='npstere',
@@ -45,5 +44,5 @@ for year in range(2003, 2021):
                      transform=crs, color=color, lw=2, zorder=z, alpha=0.5)
 
 for imtype in ['png', 'pdf']:
-    fig.save("../figures/fig01_study_region.{im}".format(im=imtype), dpi=300)
+    fig.save("../figures/{im}/fig01_study_region.{im}".format(im=imtype), dpi=300)
 

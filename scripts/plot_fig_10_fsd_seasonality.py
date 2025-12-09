@@ -112,7 +112,7 @@ df_nsidc['miz_percent'] = df_nsidc['miz_ice_extent'] / df_nsidc['sea_ice_extent'
 mean_percent = df_nsidc.groupby(df_nsidc.index.dayofyear).mean()
 ax.plot(mean_percent.index,
             mean_percent['miz_percent'].values*100, alpha=1, lw=3, color='tab:blue')
-ax.format(ylabel='MIZ extent (% of ice area)', xlocator=dr.dayofyear, xformatter=[d.strftime('%b') for d in dr],
+ax.format(ylabel='MIZ Fraction (%)', xlocator=dr.dayofyear, xformatter=[d.strftime('%b') for d in dr],
           xlabel='', xrotation=45, fontsize=12, xlim=(85, 265), title='MIZ fraction')
 
 h = []
