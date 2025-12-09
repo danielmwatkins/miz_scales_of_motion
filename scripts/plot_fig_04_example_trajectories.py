@@ -55,7 +55,9 @@ for date in plot_dates:
     floe_images[date] = rio.open('../data/example_images/{d}.aqua.labeled_clean.250m.tiff'.format(d=date.strftime('%Y%m%d')))
 
 imdate = pd.to_datetime('2014-04-27 12:38:45')
-plot_floes = floe_lib_clean.loc[(floe_lib_clean.floe_id != 'unmatched') & (floe_lib_clean.datetime.dt.year == imdate.year)].groupby('floe_id').filter(lambda x: imdate in x.datetime.values)
+# plot_floes = floe_lib_clean.loc[(floe_lib_clean.floe_id != 'unmatched') & (floe_lib_clean.datetime.dt.year == imdate.year)].groupby('floe_id').filter(lambda x: imdate in x.datetime.values)
+
+plot_floes = floe_lib_clean.loc[(floe_lib_clean.floe_id != 'unmatched') & (floe_lib_clean.datetime.dt.year == imdate.year)].groupby('floe_id').filter(lambda x: len(x.loc[x.satellite == 'aqua']) >= 3)
 
 # get nearby floes that have enough dates
 floe = '2014_01741'
@@ -88,7 +90,7 @@ for ax, date in zip(axs,plot_dates):
     ax.imshow(reshape_as_image(tc_images[date].read()), extent=[left, right, bottom, top])
     image = floe_images[date].read().squeeze()
     
-    outlines = image - skimage.morphology.erosion(image, skimage.morphology.disk(4))
+    outlines = image - skimage.morphology.erosion(image, skimage.morphology.disk(3))
     ax.pcolorfast(np.linspace(left, right, outlines.shape[1]),
           np.linspace(top, bottom, outlines.shape[0]),
           np.ma.masked_array(outlines, mask=outlines == 0), color='k')
