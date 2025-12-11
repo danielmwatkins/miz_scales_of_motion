@@ -60,7 +60,9 @@ for date in plot_dates:
 imdate = pd.to_datetime('2014-04-27 12:38:45')
 # plot_floes = floe_lib_clean.loc[(floe_lib_clean.floe_id != 'unmatched') & (floe_lib_clean.datetime.dt.year == imdate.year)].groupby('floe_id').filter(lambda x: imdate in x.datetime.values)
 
-plot_floes = floe_lib_clean.loc[(floe_lib_clean.floe_id != 'unmatched') & (floe_lib_clean.datetime.dt.year == imdate.year)].groupby('floe_id').filter(lambda x: len(x.loc[x.satellite == 'aqua']) >= 3)
+plot_floes = floe_lib_clean.loc[(floe_lib_clean.floe_id != 'unmatched') & \
+    (floe_lib_clean.datetime.dt.year == imdate.year)].groupby('floe_id').filter(
+    lambda x: len(x.loc[x.satellite == 'aqua']) >= 2)
 
 # get nearby floes that have enough dates
 floe = '2014_01741'
@@ -91,17 +93,17 @@ colors = [c['color'] for c in pplt.Cycle('Dark2', len(floes))]
 
 for ax, date in zip(axs,plot_dates):
     ax.imshow(reshape_as_image(tc_images[date].read()), extent=[left, right, bottom, top])
-    # Overlay raw floes
-    ax.imshow(np.ma.masked_array(raw_images[date], (raw_images[date]==0) | (clean_images[date] > 0)),
-              color='sky blue', alpha=0.5, extent=[left, right, bottom, top])
+    # # Overlay raw floes
+    # ax.imshow(np.ma.masked_array(raw_images[date], (raw_images[date]==0) | (clean_images[date] > 0)),
+    #           color='sky blue', alpha=0.5, extent=[left, right, bottom, top])
 
-    # Overlay clean floes
-    ax.imshow(np.ma.masked_array(clean_images[date], clean_images[date]==0),
-          color='tangerine', alpha=0.5, extent=[left, right, bottom, top])
+    # # Overlay clean floes
+    # ax.imshow(np.ma.masked_array(clean_images[date], clean_images[date]==0),
+    #       color='tangerine', alpha=0.5, extent=[left, right, bottom, top])
 
     image = clean_images[date]
     
-    outlines = skimage.morphology.dilation(image, skimage.morphology.disk(3)) - image
+    outlines = skimage.morphology.dilation(image, skimage.morphology.disk(4)) - image
 
     for c, floe in zip(colors, floes):
         df_floe = plot_floes.loc[plot_floes.floe_id == floe].set_index('datetime')
@@ -113,8 +115,8 @@ for ax, date in zip(axs,plot_dates):
 
             ax.plot(df_floe.loc[df_floe.index <= date, 'x_stere'].values/1e3 - x0,
                     df_floe.loc[df_floe.index <= date, 'y_stere'].values/1e3 - y0, color=c, marker='.', facecolor='w')
-            ax.plot(df_floe.loc[date, 'x_stere']/1e3 - x0,
-                    df_floe.loc[date, 'y_stere']/1e3 - y0, color=c, marker='.')
+            # ax.plot(df_floe.loc[date, 'x_stere']/1e3 - x0,
+            #         df_floe.loc[date, 'y_stere']/1e3 - y0, color=c, marker='.')
             
     ax.format(ylim=(-100, 100), xlim=(-100, 100), title=date.strftime("%Y-%m-%d %H:%M"), ylabel='Y (km)', xlabel='X (km)')
 axs.format(abc=True)

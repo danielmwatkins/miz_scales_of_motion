@@ -179,5 +179,72 @@ axs[1, 2].legend(h, l, loc='lr', ncols=1, alpha=1, label='SIC')
 for imtype in ['png', 'pdf']:
     fig.save('../figures/{im}/fig12_mean_drift.{im}'.format(im=imtype), dpi=300)
 
+pplt.close(fig)
+
+fig, axs = pplt.subplots(width=8, proj='npstere',
+                         proj_kw={'lon_0': -45}, ncols=6, nrows=1, share=False)
+# 
+for ax in axs:
+    ax.set_extent([0.5e6, 0.97e6, -2.05e6, -0.77e6], crs=crs)  
+    ax.format(land=True, coast=True, 
+           landzorder=0, landcolor='k', facecolor='w')
+from matplotlib.patches import Rectangle
+month_names = ['April', 'May', 'June']
+for ax in [axs[0], axs[3]]:
+    left = 0.5e6
+    top = -0.77e6
+    left_pad = 50e3
+    top_pad = 0.13e6
+    ax.add_patch(Rectangle([left, top-150e3], 200e3, 150e3, facecolor='w', edgecolor='k', transform=crs, zorder=10))
+    ax.plot([left + left_pad, left + left_pad + 100e3], [top - top_pad, top - top_pad],
+            lw=4, color='k',transform=crs, zorder=11)
+    ax.text(left + left_pad + 30e3, top - 0.1e6, '100 km', color='k', zorder=11, transform=crs)
+
+    ax.quiver(left + left_pad, top - 0.065e6, 20, 0,
+              lw=4, color='k', scale=90, width=1/100, transform=crs, zorder=11)
+    ax.text(left + left_pad + 30e3, top - 0.04e6, '10 cm/s', color='k', zorder=11, transform=crs)
+
+for col, month in zip([0, 1, 2], [4, 5, 6]):
+
+    idx_data = hist[month] > 30
+    
+    # Plot count of IFT observations
+    c0 = axs[col].pcolor(lon_grid, lat_grid, hist[month].where(idx_data).T.values, vmin=0, vmax=100,
+           transform=ccrs.PlateCarree(), cmap='blues', extend='max')
+    
+    axs[col].quiver(lon_grid, lat_grid, u_data[month]['IFT'].where(idx_data).T.values, v_data[month]['IFT'].where(idx_data).T.values,
+               transform=ccrs.PlateCarree(), color='r', scale=90, width=1/150, label='IFT')
+    axs[col].quiver(lon_grid, lat_grid, u_data[month]['NSIDC'].where(idx_data).T.values, v_data[month]['NSIDC'].where(idx_data).T.values,
+               transform=ccrs.PlateCarree(), color='k', scale=90, width=1/100, label='NSIDC')
+    
+    axs[0].legend(loc='ll', ncols=1, alpha=1, lw=2)
+    
+    c1 = axs[col + 3].pcolor(lon_grid, lat_grid, diffs_mean[month].where(idx_data).T.values, vmin=0, vmax=20,
+           transform=ccrs.PlateCarree(), cmap='reds', extend='max', N=7)
+    axs[col + 3].quiver(lon_grid, lat_grid, diffs_u[month].where(idx_data).T.values, diffs_v[month].where(idx_data).T.values,
+               transform=ccrs.PlateCarree(), color='k', scale=90, width=1/100)
+
+    monthly_mean = ds_asi.sel(time=ds_asi.time.dt.month == month).mean(dim='time')
+    axs[col].contour(monthly_mean.x, monthly_mean.y, monthly_mean['sic'], levels=[1, 15, 85], ls=[':', '--', '-'], color='k', transform=crs)
+    axs[col + 3].contour(monthly_mean.x, monthly_mean.y, monthly_mean['sic'], levels=[1, 15, 85], ls=[':', '--', '-'], color='k', transform=crs)
+    axs[col].format(title=month_names[col])
+    axs[col + 3].format(title=month_names[col])
+    
+axs[col].colorbar(c0, loc='r', shrink=0.85, label='Count', labelsize=11)
+axs[col + 3].colorbar(c1, loc='r', shrink=0.85, label='Magnitude of Difference (cm/s)', labelsize=11)
+# axs.format(leftlabels = ['Mean Drift','Difference'],
+#            toplabels=['April', 'May', 'June'], fontsize=12, abc=True)
+h = []
+for ls in [':', '--', '-']:
+    h.append(axs[0,0].plot([], [], ls=ls, color='k'))
+l = ['1%', '15%', '85%']
+axs[col].legend(h, l, loc='lr', ncols=1, alpha=1, label='SIC') 
+axs[col + 3].legend(h, l, loc='lr', ncols=1, alpha=1, label='SIC') 
+
+for imtype in ['png', 'pdf']:
+    fig.save('../figures/{im}/fig12_mean_drift_horiz.{im}'.format(im=imtype), dpi=300)
+
+
+
 
 
