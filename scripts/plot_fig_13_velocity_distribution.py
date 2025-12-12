@@ -171,7 +171,7 @@ df_comp = compute_along_across_components(comp, uvar='u', vvar='v',
 #### Fluctuating Velocity Distributions
 
 for ax, symb, var in zip([axs[1,0], axs[1,1]], ['d', '+'], ['U_along', 'U_fluctuating']):
-    for c, idx in zip(['slateblue', 'tab:green'], 
+    for c, idx in zip(['tab:green', 'slateblue'], 
                           [df_comp.nsidc_sic > 0.85, df_comp.nsidc_sic.between(0.15, 0.85)]):
         ustd = df_comp.loc[idx, var].std()
         u = df_comp.loc[idx, var]
@@ -211,14 +211,14 @@ axs[1,1].format(title='', xlabel='$u\'_T$ (m/s)/$\\sigma_{u\'_T}$',
 axs[1,1].legend(ncols=1)
 l = ['Pack Ice', 'MIZ']
 h = [ax.plot([],[], marker='s', color=c, lw=0, ls='')
-     for c in ['slateblue', 'tab:green']]
+     for c in ['tab:green', 'slateblue']]
 axs[1,0].legend(h, l, loc='ur', ncols=1)
 axs[1,1].legend(h, l, loc='ur', ncols=1)
 
 
 ax = axs[0,2]
 for data, color in zip([df_pack_lscale, df_miz_lscale],
-                       ['slateblue', 'tab:green']):
+                       ['tab:green', 'slateblue']):
     idx = data.n > 300
     ax.plot(data.loc[idx, 'L'].values,
             data.loc[idx, 'sigma_ul'].values,
@@ -231,7 +231,7 @@ for data, color in zip([df_pack_lscale, df_miz_lscale],
               ylim=(0, 0.12), xlim=(5, 30), yscale='linear')
 ax = axs[1,2]
 for data, color in zip([df_pack_edge, df_miz_edge],
-                       ['slateblue', 'tab:green']):
+                       [ 'tab:green', 'slateblue']):
     idx = data.n > 300
     ax.plot(data.loc[idx, 'd'].values,
             data.loc[idx, 'sigma_ul'].values,
@@ -246,7 +246,7 @@ for data, color in zip([df_pack_edge, df_miz_edge],
 l = ['Longitudinal', 'Transverse', 'Pack Ice', 'MIZ']
 h = [ax.plot([],[], marker=m, color=c, lw=lw, ls=ls)
      for m, c, lw, ls in zip(['d', 'o', 's', 's'],
-                              ['k', 'k', 'slateblue', 'tab:green'],
+                              ['k', 'k', 'tab:green', 'slateblue'],
                               [1, 1, 0, 0], ['-', '--', '', ''])]
 axs[0, 2].legend(h, l, ncols=1, loc='ll')
 axs[1, 2].legend(h, l, ncols=1, loc='ll')
