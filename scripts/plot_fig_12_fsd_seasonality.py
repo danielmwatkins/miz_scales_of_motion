@@ -50,10 +50,10 @@ _ = ax.scatter(results.loc[results.n > n_threshold].date.dt.dayofyear/30,
 _ = ax.scatter(results_alt.doy/30, results_alt[variable], marker='o', ms=5, zorder=0, color='r', label='Binned by DOY')
 
 ax.format(ylim=(1, 3), xlocator=dr.dayofyear/30, xformatter=[d.strftime('%b') for d in dr],
-          xlabel='', ylabel='$\\alpha$', title='Power law slope', fontsize=12, xrotation=45)
+          xlabel='', ylabel='$\\alpha$', title='Power law slope', fontsize=12, xrotation=0)
 ax.legend(loc='lr', ncols=1, ms=15, fontsize=12)
 
 # PDF for publication, PNG for slides
 for imtype in ['pdf', 'png']:
-    fig.save('../figures/{im}fig12_fsd_slope.{im}'.format(im=imtype), dpi=300)
+    fig.save('../figures/{im}/fig12_fsd_slope.{im}'.format(im=imtype), dpi=300)
 
