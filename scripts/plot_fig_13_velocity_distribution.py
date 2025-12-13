@@ -138,18 +138,18 @@ for tau, ls in zip(['5D', '15D', '31D'], ['-', '--', ':']):
     df_comp = compute_along_across_components(comp, uvar='u', vvar='v',
                                         umean='u' + tau + '_nsidc',
                                         vmean='u' + tau + '_nsidc')
-    u = df_comp['U_along']
-    v = df_comp['U_fluctuating']
-    u_pdf, _ = np.histogram(u, bins=x_bins, density=True)
-    v_pdf, _ = np.histogram(v, bins=x_bins, density=True)
-    x_center = 1/2*(x_bins[1:] + x_bins[:-1])
+    # u = df_comp['U_along']
+    # v = df_comp['U_fluctuating']
+    # u_pdf, _ = np.histogram(u, bins=x_bins, density=True)
+    # v_pdf, _ = np.histogram(v, bins=x_bins, density=True)
+    # x_center = 1/2*(x_bins[1:] + x_bins[:-1])
 
     label = 'Diff'
     if tau != '5D':
         label = ''
         
-    axs[0, 0].plot(x_center, u_pdf, color='tab:blue', label=label, ls=ls, lw=1)
-    axs[0, 1].plot(x_center, v_pdf, color='tab:blue', label=label, ls=ls, lw=1)
+    # axs[0, 0].plot(x_center, u_pdf, color='tab:blue', label=label, ls=ls, lw=1)
+    # axs[0, 1].plot(x_center, v_pdf, color='tab:blue', label=label, ls=ls, lw=1)
 axs[0,0].format(title='', ylabel='Probability')
 axs[0,1].format(title='', ylabel='Probability')
 axs[0,0].format(xlabel='$u\'_L$ (m/s)', yscale='log', xlim=(-0.4, 0.4), ylim=(0.1, 20), abc=True)
@@ -169,8 +169,7 @@ df_comp = compute_along_across_components(comp, uvar='u', vvar='v',
                                     vmean='u' + tau + '_nsidc')
 
 #### Fluctuating Velocity Distributions
-
-for ax, symb, var in zip([axs[1,0], axs[1,1]], ['d', '+'], ['U_along', 'U_fluctuating']):
+for ax, symb, var in zip([axs[1,0], axs[1,1]], ['d', 'o'], ['U_along', 'U_fluctuating']):
     for c, idx in zip(['tab:green', 'slateblue'], 
                           [df_comp.nsidc_sic > 0.85, df_comp.nsidc_sic.between(0.15, 0.85)]):
         ustd = df_comp.loc[idx, var].std()
@@ -201,11 +200,11 @@ for ax, symb, var in zip([axs[1,0], axs[1,1]], ['d', '+'], ['U_along', 'U_fluctu
             lw=1, color='k', ls=':', label='Exp({s})'.format(s=np.round(exp_scale, 2)), zorder=10)
 
    
-axs[1,0].format(title='', xlabel='$u\'_L$ (m/s)/$\\sigma_{u\'_L}$',
+axs[1,0].format(title='', xlabel='$u\'_L / \\sigma_{u\'_L}$',
               yscale='log', ylim=(1e-4, 1.2), xlim=(-7, 7),
               yformatter='log', ylabel='PDF')
 axs[1,0].legend(ncols=1)
-axs[1,1].format(title='', xlabel='$u\'_T$ (m/s)/$\\sigma_{u\'_T}$',
+axs[1,1].format(title='', xlabel='$u\'_T / \\sigma_{u\'_T}$',
               yscale='log', ylim=(1e-4, 1.2), xlim=(-7, 7),
               yformatter='log', ylabel='PDF')
 axs[1,1].legend(ncols=1)
@@ -254,3 +253,154 @@ axs[1, 2].legend(h, l, ncols=1, loc='ll')
 fig.format(fontsize=12)
 for imtype in ['pdf', 'png']:
     fig.save('../figures/{im}/figXX_simpler_velocity_dist.{im}'.format(im=imtype), dpi=300)
+
+##### Column ordered (option 2) ######
+fig, axs = pplt.subplots(height=6, nrows=2, ncols=3, share=False)
+x_bins = np.linspace(-0.6, 0.6, 51)
+
+#### All time scales, comparison with NSIDC
+for tau, ls in zip(['5D', '15D', '31D'], ['-', '--', ':']):
+    df_temp = df_ift.copy()
+    df_temp['u'] = df_temp['u'] - df_temp['u' + tau + '_nsidc']
+    df_temp['v'] = df_temp['v'] - df_temp['v' + tau + '_nsidc']
+    df_rot_ift = compute_along_across_components(df_temp, uvar='u', vvar='v',
+                                    umean='u' + tau + '_nsidc',
+                                    vmean='u' + tau + '_nsidc')
+
+    df_temp = df_ift.copy()
+    df_temp['u'] = df_temp['u_nsidc'] - df_temp['u' + tau + '_nsidc']
+    df_temp['v'] = df_temp['v_nsidc'] - df_temp['v' + tau + '_nsidc']
+    df_rot_nsidc = compute_along_across_components(df_temp, uvar='u', vvar='v',
+                                    umean='u' + tau + '_nsidc',
+                                    vmean='u' + tau + '_nsidc')
+    
+    for data, color, product in zip([df_rot_ift, df_rot_nsidc], ['r', 'k'], ['IFT', 'NSIDC']):
+    
+        u = data['U_along']
+        v = data['U_fluctuating']
+        u_pdf, _ = np.histogram(u, bins=x_bins, density=True)
+        v_pdf, _ = np.histogram(v, bins=x_bins, density=True)
+        x_center = 1/2*(x_bins[1:] + x_bins[:-1])
+
+        label = product
+        if tau != '5D':
+            label = ''
+            
+        axs[0, 0].plot(x_center, u_pdf, color=color, label=label, ls=ls)
+        axs[1, 0].plot(x_center, v_pdf, color=color, label=label, ls=ls)
+    comp = df_ift.copy()
+    comp['u'] = comp['u'] - comp['u_nsidc']
+    comp['v'] = comp['v'] - comp['v_nsidc']
+    df_comp = compute_along_across_components(comp, uvar='u', vvar='v',
+                                        umean='u' + tau + '_nsidc',
+                                        vmean='u' + tau + '_nsidc')
+
+    label = 'Diff'
+    if tau != '5D':
+        label = ''
+        
+axs[0,0].format(title='', ylabel='Probability')
+axs[1,0].format(title='', ylabel='Probability')
+axs[0,0].format(xlabel='$u\'_L$ (m/s)', yscale='log', xlim=(-0.4, 0.4), ylim=(0.1, 20), abc=True)
+axs[1,0].format(xlabel='$u\'_T$ (m/s)', yscale='log', xlim=(-0.4, 0.4), ylim=(0.1, 20), abc=True)
+h = [axs[0,0].plot([],[], lw=1, color=c) for c in ['r', 'k']]
+h += [axs[0,0].plot([],[], lw=1, color='gray', ls=ls) for ls in ['-', '--', ':']]
+axs[0,0].legend(h, ['IFT', 'NSIDC', '$\\tau=$5D', '$\\tau=$15D', '$\\tau=$31D'], loc='ul', ncols=1)
+
+axs.format(abc=True)
+
+tau = '5D'
+comp = df_ift.copy()
+comp['u'] = comp['u'] - comp['u5D_nsidc']
+comp['v'] = comp['v'] - comp['v5D_nsidc']
+df_comp = compute_along_across_components(comp, uvar='u', vvar='v',
+                                    umean='u' + tau + '_nsidc',
+                                    vmean='u' + tau + '_nsidc')
+
+
+
+#### Fluctuating Velocity Distributions
+for ax, symb, var in zip([axs[0,1], axs[1,1]], ['d', 'o'], ['U_along', 'U_fluctuating']):
+    for c, idx in zip(['tab:green', 'slateblue'], 
+                          [df_comp.nsidc_sic > 0.85, df_comp.nsidc_sic.between(0.15, 0.85)]):
+        ustd = df_comp.loc[idx, var].std()
+        u = df_comp.loc[idx, var]
+        print(tau, var, np.round(ustd*100, 3), 'cm/s')   
+        pdf, x_bins = np.histogram(u/ustd, bins=np.linspace(-7, 7, 151), density=True)
+        x_center = 1/2*(x_bins[1:] + x_bins[:-1])
+        
+        label_pdf = 'N(0, 1)'
+        
+        ax.scatter(x_center, pdf, marker=symb, zorder=5, color=c, label='') 
+    
+        train = df_comp.loc[idx].dropna(subset=var).sample(1000, replace=False)
+        test = df_comp.loc[idx].dropna(subset=var)
+        test = test.loc[[x for x in test.index if x not in train.index]]
+        abs_u_train = np.abs(train[var])/np.std(train[var])
+        abs_u_test = np.abs(test[var])/np.std(test[var])
+        exp_loc, exp_scale = stats.expon.fit(abs_u_train, floc=0)
+        print('Fitted exponential dist. scale param:', np.round(exp_scale, 2))
+
+        expon_dist = stats.expon(loc=0, scale=exp_scale).pdf
+        normal_dist = stats.norm(loc=0, scale=1).pdf
+
+        if c == 'slateblue':
+            ax.plot(x_center, normal_dist(x_center), marker='',
+                lw=1, color='k', ls='--', label='N(0, 1)', zorder=10)
+            ax.plot(x_center, 0.5*expon_dist(np.abs(x_center)), marker='',
+            lw=1, color='k', ls=':', label='Exp({s})'.format(s=np.round(exp_scale, 2)), zorder=10)
+
+   
+axs[0, 1].format(title='', xlabel='$u\'_L / \\sigma_{u\'_L}$',
+              yscale='log', ylim=(1e-4, 1.2), xlim=(-7, 7),
+              yformatter='log', ylabel='PDF')
+axs[0, 1].legend(ncols=1)
+axs[1,1].format(title='', xlabel='$u\'_T / \\sigma_{u\'_T}$',
+              yscale='log', ylim=(1e-4, 1.2), xlim=(-7, 7),
+              yformatter='log', ylabel='PDF')
+axs[1,1].legend(ncols=1)
+l = ['Pack Ice', 'MIZ']
+h = [ax.plot([],[], marker='s', color=c, lw=0, ls='')
+     for c in ['tab:green', 'slateblue']]
+axs[0, 1].legend(h, l, loc='ur', ncols=1)
+axs[1,1].legend(h, l, loc='ur', ncols=1)
+
+
+ax = axs[0,2]
+for data, color in zip([df_pack_lscale, df_miz_lscale],
+                       ['tab:green', 'slateblue']):
+    idx = data.n > 300
+    ax.plot(data.loc[idx, 'L'].values,
+            data.loc[idx, 'sigma_ul'].values,
+            marker='d', label='', color=color)
+    ax.plot(data.loc[idx, 'L'].values,
+            data.loc[idx, 'sigma_ut'].values, ls='--',
+            marker='o', label='', color=color)
+    ax.format(xlabel='Length scale (km)', 
+              ylabel='$\\sigma_{u\'}$', title='',
+              ylim=(0, 0.12), xlim=(5, 30), yscale='linear')
+ax = axs[1,2]
+for data, color in zip([df_pack_edge, df_miz_edge],
+                       [ 'tab:green', 'slateblue']):
+    idx = data.n > 300
+    ax.plot(data.loc[idx, 'd'].values,
+            data.loc[idx, 'sigma_ul'].values,
+            marker='d', label='', color=color)
+    ax.plot(data.loc[idx, 'd'].values,
+            data.loc[idx, 'sigma_ut'].values, ls='--',
+            marker='o', label='', color=color)
+    ax.format(xlabel='Edge distance (km)', 
+              ylabel='$\\sigma_{u\'}$', title='',
+              ylim=(0, 0.12), xlim=(0, 400), yscale='linear')
+
+l = ['Longitudinal', 'Transverse', 'Pack Ice', 'MIZ']
+h = [ax.plot([],[], marker=m, color=c, lw=lw, ls=ls)
+     for m, c, lw, ls in zip(['d', 'o', 's', 's'],
+                              ['k', 'k', 'tab:green', 'slateblue'],
+                              [1, 1, 0, 0], ['-', '--', '', ''])]
+axs[0, 2].legend(h, l, ncols=1, loc='ll')
+axs[1, 2].legend(h, l, ncols=1, loc='ll')
+
+fig.format(fontsize=12)
+for imtype in ['pdf', 'png']:
+    fig.save('../figures/{im}/figXX_simpler_velocity_dist_option2.{im}'.format(im=imtype), dpi=300)

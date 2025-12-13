@@ -134,7 +134,7 @@ l = ['15%', '85%']
 
 month_names = {4: 'April', 5: 'May', 6: 'June'}
 for ax, month in zip(axs, [4, 5, 6]*4):
-    ax.set_extent([0.45e6, 1.1e6, -2.05e6, -0.77e6], crs=crs)  
+    ax.set_extent([0.49e6, 1.1e6, -2.05e6, -0.77e6], crs=crs)  
     ax.format(land=True, coast=True, lonlocator=np.arange(-30, 30, 10),
               latmax=85, latlocator=np.arange(55, 85, 5), 
            landzorder=0, landcolor='k', facecolor='w')

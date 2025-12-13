@@ -28,7 +28,7 @@ df_filtered = df_ift.loc[df_ift.qc_flag==0]
 
 df_filtered['l_bin'] = np.digitize(df_filtered['L'], bins=np.arange(0, 60, 5))
 df_filtered['l_center'] = [pd.Series(np.arange(2.5, 63, 5), index=np.arange(1, 14))[x] for x in df_filtered['l_bin']]
-subset = df_filtered.loc[(df_filtered.qc_flag == 0) & df_filtered.zeta.notnull()]
+subset = df_filtered.loc[(df_filtered.qc_flag == 0) & df_filtered.zeta.notnull()].copy()
 
 subset['month'] = subset.datetime.dt.month
 subset['year'] = subset.datetime.dt.year
@@ -91,4 +91,6 @@ axs[1,0].format(title='Pack Ice')
 axs[0,1].format(title='MIZ')
 axs[1,1].format(title='MIZ')
 axs.format(abc=True)
-fig.save('../figures/pdf/figXX_rotation_rate_distribution.pdf', dpi=300)
+
+for imtype in ['png', 'pdf']:
+    fig.save('../figures/{im}/figXX_rotation_rate_distribution.{im}'.format(im=imtype), dpi=300)

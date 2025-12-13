@@ -11,10 +11,10 @@ saveloc = '../data/floe_tracker/ift_fsd_tables/'
 dataloc = '../data/floe_tracker/'
 # join these from yearly files instead
 floe_lib_clean = {}
-for file in os.listdir('../data/floe_tracker/ift_floe_property_tables/clean/'):
+for file in os.listdir('../data/floe_tracker/ift_floe_property_tables/with_nsidc/'):
     if 'csv' in file: 
         year = int(file.replace('.csv', '').split('_')[-1])
-        floe_lib_clean[year] = pd.read_csv('../data/floe_tracker/ift_floe_property_tables/clean/' + file,
+        floe_lib_clean[year] = pd.read_csv('../data/floe_tracker/ift_floe_property_tables/with_nsidc/' + file,
                                          index_col=0, dtype={'classification': str})
         floe_lib_clean[year]['datetime'] = pd.to_datetime(floe_lib_clean[year]['datetime'])
 
