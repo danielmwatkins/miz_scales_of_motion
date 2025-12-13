@@ -1,6 +1,6 @@
 """Plot deformation scaling results."""
 import pandas as pd
-import proplot as pplt
+import ultraplot as pplt
 import numpy as np
 import scipy.stats as stats
 
@@ -123,5 +123,5 @@ for ax, month, monthname in zip(axs, range(4, 7), ['April', 'May', 'June']):
 # add custom legend
 ax.legend(h, ['Observations', 'Mean', 'LSQ Fit', 'Median', '25-75%', '10-90%', 'MLE Mean', 'MLE Median'], ncols=1,loc='r')
 axs.format(abc=True)
-fig.save('../figures/fig14_deformation_scales.png', dpi=300)
-fig.save('../figures/fig14_deformation_scales.pdf', dpi=300)
+fig.save('../figures/fig17_deformation_scales.png', dpi=300)
+fig.save('../figures/fig17_deformation_scales.pdf', dpi=300)

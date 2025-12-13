@@ -93,4 +93,4 @@ axs[1,1].format(title='MIZ')
 axs.format(abc=True)
 
 for imtype in ['png', 'pdf']:
-    fig.save('../figures/{im}/figXX_rotation_rate_distribution.{im}'.format(im=imtype), dpi=300)
+    fig.save('../figures/{im}/fig16_rotation_rate_distribution.{im}'.format(im=imtype), dpi=300)

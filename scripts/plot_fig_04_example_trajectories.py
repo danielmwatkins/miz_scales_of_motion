@@ -39,7 +39,7 @@ floe_lib_clean = pd.concat(floe_lib_clean).reset_index()
 trajectories = pd.read_csv('../data/floe_tracker/ift_floe_trajectories.csv', index_col=0)
 trajectories['datetime'] = pd.to_datetime(trajectories['datetime'])
 
-######## Figure 3: Trajectory example ########
+######## Figure 4: Trajectory example ########
 
 # Dates with multiple tracked floes, all from the Aqua satellite
 plot_dates = [pd.to_datetime(x) for x in ['2014-04-27 12:38:45', '2014-04-28 11:43:40',

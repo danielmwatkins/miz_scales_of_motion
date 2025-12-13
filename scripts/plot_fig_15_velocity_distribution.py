@@ -252,7 +252,7 @@ axs[1, 2].legend(h, l, ncols=1, loc='ll')
 
 fig.format(fontsize=12)
 for imtype in ['pdf', 'png']:
-    fig.save('../figures/{im}/figXX_simpler_velocity_dist.{im}'.format(im=imtype), dpi=300)
+    fig.save('../figures/{im}/fig15_simpler_velocity_dist.{im}'.format(im=imtype), dpi=300)
 
 ##### Column ordered (option 2) ######
 fig, axs = pplt.subplots(height=6, nrows=2, ncols=3, share=False)
@@ -403,4 +403,4 @@ axs[1, 2].legend(h, l, ncols=1, loc='ll')
 
 fig.format(fontsize=12)
 for imtype in ['pdf', 'png']:
-    fig.save('../figures/{im}/figXX_simpler_velocity_dist_option2.{im}'.format(im=imtype), dpi=300)
+    fig.save('../figures/{im}/fig15_simpler_velocity_dist_option2.{im}'.format(im=imtype), dpi=300)

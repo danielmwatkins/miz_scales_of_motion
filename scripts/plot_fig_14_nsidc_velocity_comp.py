@@ -194,6 +194,6 @@ for ax, month in zip(axs[1, 3:6], month_names):
 ax.colorbar(c3, label='Difference Magnitude (cm/s)', loc='r', shrink=0.9)
 axs.format(abc=True)
 for imtype in ['png', 'pdf']:
-    fig.save('../figures/{im}/figXX_mean_drift.{im}'.format(im=imtype), dpi=300)
+    fig.save('../figures/{im}/fig14_mean_drift.{im}'.format(im=imtype), dpi=300)
 
 
