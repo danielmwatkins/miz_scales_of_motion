@@ -52,5 +52,5 @@ ax.text(1020, 0.00015, 'PDF')
 
 ax.legend(loc='ll', ncols=1)
 ax.format(xlabel='Floe area (km$^2$)', ylabel='Probability')
-fig.save('../figures/fig13_all_floes_v_tracked_FSD.png')
-fig.save('../figures/fig13_all_floes_v_tracked_FSD.pdf')
+for imtype in ['png', 'pdf']:
+    fig.save('../figures/{im}/fig13_all_floes_v_tracked_FSD.{im}'.format(im=imtype), dpi=300)

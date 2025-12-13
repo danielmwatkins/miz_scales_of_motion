@@ -54,5 +54,5 @@ for ax, comp in zip(axs[1,:], ['PL_v_TPL', 'PL_v_LN', 'LN_v_TPL']):
               lrtitle='Favors ' + comp.split('_')[2])
 
 axs.format(leftlabels=['Single image', 'Binned by DOY'], abc=True)    
-fig.save('../figures/fig10_likelihood_ratio_results.png', dpi=300)
-fig.save('../figures/fig10_likelihood_ratio_results.pdf', dpi=300)
+for imtype in ['png', 'pdf']:
+    fig.save('../figures/{im}/fig10_likelihood_ratio_results.{im}'.format(im=imtype), dpi=300)

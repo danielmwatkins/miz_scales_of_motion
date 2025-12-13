@@ -84,5 +84,5 @@ for ax, example_date in zip(axs, [pd.to_datetime('2017-04-03T13:55:35'),
                   'Individual Years (n=' + str(n) + ')'], loc='ll', order='F', ncols=1)
 
 axs.format(abc=True, fontsize=10)
-fig.save('../figures/fig11_example_dates_fsd.pdf')
-fig.save('../figures/fig11_example_dates_fsd.png', dpi=300)
+for imtype in ['png', 'pdf']:
+    fig.save('../figures/{im}/fig11_example_dates_fsd.{im}'.format(im=imtype))
