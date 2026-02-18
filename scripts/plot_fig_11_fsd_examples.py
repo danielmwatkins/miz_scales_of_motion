@@ -83,6 +83,6 @@ for ax, example_date in zip(axs, [pd.to_datetime('2017-04-03T13:55:35'),
                   'Binned 2003-20 (Fitted)',
                   'Individual Years (n=' + str(n) + ')'], loc='ll', order='F', ncols=1)
 
-axs.format(abc=True, fontsize=10)
+axs.format(abc=True, fontsize=10,ç)
 for imtype in ['png', 'pdf']:
     fig.save('../figures/{im}/fig11_example_dates_fsd.{im}'.format(im=imtype))

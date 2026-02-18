@@ -100,7 +100,7 @@ sigma = 1
 normal_dist = lambda x: 1/(sigma*np.sqrt(2*np.pi))*np.exp(-1/2 * (x/sigma)**2)
 
 fig, axs = pplt.subplots(height=6, nrows=2, ncols=3, share=False)
-x_bins = np.linspace(-0.6, 0.6, 51)
+x_bins = np.linspace(-60, 60, 51)
 
 #### All time scales, comparison with NSIDC
 for tau, ls in zip(['5D', '15D', '31D'], ['-', '--', ':']):
@@ -120,8 +120,8 @@ for tau, ls in zip(['5D', '15D', '31D'], ['-', '--', ':']):
     
     for data, color, product in zip([df_rot_ift, df_rot_nsidc], ['r', 'k'], ['IFT', 'NSIDC']):
     
-        u = data['U_along']
-        v = data['U_fluctuating']
+        u = data['U_along'] * 100
+        v = data['U_fluctuating'] * 100
         u_pdf, _ = np.histogram(u, bins=x_bins, density=True)
         v_pdf, _ = np.histogram(v, bins=x_bins, density=True)
         x_center = 1/2*(x_bins[1:] + x_bins[:-1])
@@ -152,8 +152,8 @@ for tau, ls in zip(['5D', '15D', '31D'], ['-', '--', ':']):
     # axs[0, 1].plot(x_center, v_pdf, color='tab:blue', label=label, ls=ls, lw=1)
 axs[0,0].format(title='', ylabel='Probability')
 axs[0,1].format(title='', ylabel='Probability')
-axs[0,0].format(xlabel='$u\'_L$ (m/s)', yscale='log', xlim=(-0.4, 0.4), ylim=(0.1, 20), abc=True)
-axs[0,1].format(xlabel='$u\'_T$ (m/s)', yscale='log', xlim=(-0.4, 0.4), ylim=(0.1, 20), abc=True)
+axs[0,0].format(xlabel='$u\'_L$ (cm/s)', yscale='log', yformatter='log', xlim=(-40,40), ylim=(1e-4, 0), abc=True)
+axs[0,1].format(xlabel='$u\'_T$ (cm/s)', yscale='log', yformatter='log', xlim=(-40,40), ylim=(1e-4, 0), abc=True)
 h = [axs[0,0].plot([],[], lw=1, color=c) for c in ['r', 'k']]
 h += [axs[0,0].plot([],[], lw=1, color='gray', ls=ls) for ls in ['-', '--', ':']]
 axs[0,0].legend(h, ['IFT', 'NSIDC', '$\\tau=$5D', '$\\tau=$15D', '$\\tau=$31D'], loc='ul', ncols=1)
@@ -172,9 +172,9 @@ df_comp = compute_along_across_components(comp, uvar='u', vvar='v',
 for ax, symb, var in zip([axs[1,0], axs[1,1]], ['d', 'o'], ['U_along', 'U_fluctuating']):
     for c, idx in zip(['tab:green', 'slateblue'], 
                           [df_comp.nsidc_sic > 0.85, df_comp.nsidc_sic.between(0.15, 0.85)]):
-        ustd = df_comp.loc[idx, var].std()
-        u = df_comp.loc[idx, var]
-        print(tau, var, np.round(ustd*100, 3), 'cm/s')   
+        ustd = df_comp.loc[idx, var].std() * 100
+        u = df_comp.loc[idx, var] * 100
+        print(tau, var, np.round(ustd, 3), 'cm/s')   
         pdf, x_bins = np.histogram(u/ustd, bins=np.linspace(-7, 7, 151), density=True)
         x_center = 1/2*(x_bins[1:] + x_bins[:-1])
         
@@ -256,7 +256,7 @@ for imtype in ['pdf', 'png']:
 
 ##### Column ordered (option 2) ######
 fig, axs = pplt.subplots(height=6, nrows=2, ncols=3, share=False)
-x_bins = np.linspace(-0.6, 0.6, 51)
+x_bins = np.linspace(-60, 60, 51)
 
 #### All time scales, comparison with NSIDC
 for tau, ls in zip(['5D', '15D', '31D'], ['-', '--', ':']):
@@ -276,8 +276,8 @@ for tau, ls in zip(['5D', '15D', '31D'], ['-', '--', ':']):
     
     for data, color, product in zip([df_rot_ift, df_rot_nsidc], ['r', 'k'], ['IFT', 'NSIDC']):
     
-        u = data['U_along']
-        v = data['U_fluctuating']
+        u = data['U_along'] * 100
+        v = data['U_fluctuating'] * 100
         u_pdf, _ = np.histogram(u, bins=x_bins, density=True)
         v_pdf, _ = np.histogram(v, bins=x_bins, density=True)
         x_center = 1/2*(x_bins[1:] + x_bins[:-1])
@@ -301,8 +301,8 @@ for tau, ls in zip(['5D', '15D', '31D'], ['-', '--', ':']):
         
 axs[0,0].format(title='', ylabel='Probability')
 axs[1,0].format(title='', ylabel='Probability')
-axs[0,0].format(xlabel='$u\'_L$ (m/s)', yscale='log', xlim=(-0.4, 0.4), ylim=(0.1, 20), abc=True)
-axs[1,0].format(xlabel='$u\'_T$ (m/s)', yscale='log', xlim=(-0.4, 0.4), ylim=(0.1, 20), abc=True)
+axs[0,0].format(xlabel='$u\'_L$ (cm/s)', yscale='log', yformatter='log', xlim=(-40, 40), ylim=(1e-4, 0), abc=True)
+axs[1,0].format(xlabel='$u\'_T$ (cm/s)', yscale='log', yformatter='log', xlim=(-40, 40), ylim=(1e-4, 0), abc=True)
 h = [axs[0,0].plot([],[], lw=1, color=c) for c in ['r', 'k']]
 h += [axs[0,0].plot([],[], lw=1, color='gray', ls=ls) for ls in ['-', '--', ':']]
 axs[0,0].legend(h, ['IFT', 'NSIDC', '$\\tau=$5D', '$\\tau=$15D', '$\\tau=$31D'], loc='ul', ncols=1)
@@ -323,15 +323,15 @@ df_comp = compute_along_across_components(comp, uvar='u', vvar='v',
 for ax, symb, var in zip([axs[0,1], axs[1,1]], ['d', 'o'], ['U_along', 'U_fluctuating']):
     for c, idx in zip(['tab:green', 'slateblue'], 
                           [df_comp.nsidc_sic > 0.85, df_comp.nsidc_sic.between(0.15, 0.85)]):
-        ustd = df_comp.loc[idx, var].std()
-        u = df_comp.loc[idx, var]
-        print(tau, var, np.round(ustd*100, 3), 'cm/s')   
+        ustd = df_comp.loc[idx, var].std() * 100
+        u = df_comp.loc[idx, var] * 100
+        print(tau, var, np.round(ustd, 3), 'cm/s')   
         pdf, x_bins = np.histogram(u/ustd, bins=np.linspace(-7, 7, 151), density=True)
         x_center = 1/2*(x_bins[1:] + x_bins[:-1])
         
         label_pdf = 'N(0, 1)'
         
-        ax.scatter(x_center, pdf, marker=symb, zorder=5, color=c, label='') 
+        ax.scatter(x_center, pdf, marker=symb, zorder=5, color=c, label='', ms=5) 
     
         train = df_comp.loc[idx].dropna(subset=var).sample(1000, replace=False)
         test = df_comp.loc[idx].dropna(subset=var)
@@ -352,11 +352,11 @@ for ax, symb, var in zip([axs[0,1], axs[1,1]], ['d', 'o'], ['U_along', 'U_fluctu
 
    
 axs[0, 1].format(title='', xlabel='$u\'_L / \\sigma_{u\'_L}$',
-              yscale='log', ylim=(1e-4, 1.2), xlim=(-7, 7),
+              yscale='log', ylim=(1e-4, 1.2), xlim=(-6, 6),
               yformatter='log', ylabel='PDF')
 axs[0, 1].legend(ncols=1)
 axs[1,1].format(title='', xlabel='$u\'_T / \\sigma_{u\'_T}$',
-              yscale='log', ylim=(1e-4, 1.2), xlim=(-7, 7),
+              yscale='log', ylim=(1e-4, 1.2), xlim=(-6, 6),
               yformatter='log', ylabel='PDF')
 axs[1,1].legend(ncols=1)
 l = ['Pack Ice', 'MIZ']

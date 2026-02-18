@@ -154,17 +154,13 @@ for ax in axs[1,:]:
 
 # Legends
 h = []
-for alpha, ls, m in zip([1, 0.5, 0.25], ['-', '', ''], ['', 's', 's']):
+for alpha, ls, m in zip([1, 0.5, 0.25], ['-', '', ''], ['.', 's', 's']):
     h.append(ax.plot([],[],color='k', alpha=alpha, ls=ls, m=m))
 
 for lw, ls, m in zip([2, 1, 1], ['-', '-', '--'], ['.', '', '']):
     h.append(ax.plot([],[],color='k', alpha=1, ls=ls, m=m))
 
-fig.legend(h, ['Pack Ice (SIC > 85%)',
-               'MIZ (SIC 15-85%)',
-               'Edge Dist < 100 km',
-               'Coast Dist < 100 km',
-               'Median', '25-75%', '10-90%',
-               'Median', '25-75%', '10-90%'], ncols=3, loc='b', order='F')
+fig.legend(h, ['Median', '25-75%', '10-90%',
+               'Median', '25-75%', '10-90%'], ncols=3, loc='b', order='C')
 for imtype in ['png', 'pdf']:
     fig.save('../figures/{im}/fig08_floe_properties_seasonality.{im}'.format(im=imtype), dpi=300)

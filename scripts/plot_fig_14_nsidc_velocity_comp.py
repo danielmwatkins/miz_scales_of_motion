@@ -12,7 +12,6 @@ import xarray as xr
 
 pplt.rc.reso = 'med'
 pplt.rc['geo.round'] = False
-
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter('ignore')
 
@@ -86,12 +85,13 @@ for month in [4, 5, 6]:
             x[sel], y[sel], values=v[sel], statistic='mean', 
             bins=[x_bins, y_bins])
 
-        # Rotation from Earth coordinates to the north polar stereographic grid for display
+        # # Rotation from Earth coordinates to the north polar stereographic grid for display
         U_nps = u_mean.T * np.sin(np.deg2rad(lon_grid + 45)) + v_mean.T * np.cos(np.deg2rad(lon_grid + 45))
         V_nps = v_mean.T * np.cos(np.deg2rad(lon_grid + 45)) - u_mean.T * np.sin(np.deg2rad(lon_grid + 45))
         u_data[month][label] = pd.DataFrame(U_nps.T, index=xc, columns=yc)
         v_data[month][label] = pd.DataFrame(V_nps.T, index=xc, columns=yc)
 
+    
     # Calculate the mean of the differences from vector components
     # and calculate the L2 norm of the difference 
     
@@ -109,11 +109,14 @@ for month in [4, 5, 6]:
                 x[sel], y[sel], values=diff_v[sel], statistic='mean', 
                 bins=[x_bins, y_bins])
     
-    # Rotation from Earth coordinates to the north polar stereographic grid for display
+    # # Rotation from Earth coordinates to the north polar stereographic grid for display
     U_nps = du.T * np.sin(np.deg2rad(lon_grid + 45)) + dv.T * np.cos(np.deg2rad(lon_grid + 45))
     V_nps = dv.T * np.cos(np.deg2rad(lon_grid + 45)) - du.T * np.sin(np.deg2rad(lon_grid + 45))
     diffs_u[month] = pd.DataFrame(U_nps.T, index=xc, columns=yc)
     diffs_v[month] = pd.DataFrame(V_nps.T, index=xc, columns=yc)
+    # diffs_u[month] = pd.DataFrame(du, index=xc, columns=yc)
+    # diffs_v[month] = pd.DataFrame(dv, index=xc, columns=yc)
+
 
     print('Month', month, 'mean difference', diffs_mean[month].mean().mean().round(2))
     
@@ -151,8 +154,8 @@ yspacing = 1
 for ax, month in zip(axs[0, 0:3], month_names):
     idx_data = hist[month] > 30
     speed = np.sqrt(u_data[month]['IFT'] **2 + v_data[month]['IFT'] **2)
-    c1 = ax.pcolor(lon_grid, lat_grid, speed.where(idx_data).T.values, vmin=0, vmax=30,
-           transform=ccrs.PlateCarree(), cmap='coolwarm', alpha=0.9)
+    c1 = ax.pcolor(lon_grid, lat_grid, speed.where(idx_data).T.values, vmin=0, vmax=20,
+           transform=ccrs.PlateCarree(), cmap='coolwarm', alpha=0.8)
 
     ax.quiver(lon_grid[::xspacing, ::yspacing], lat_grid[::xspacing, ::yspacing],
               u_data[month]['IFT'].where(idx_data).T.values[::xspacing, ::yspacing],
@@ -193,6 +196,13 @@ for ax, month in zip(axs[1, 3:6], month_names):
            transform=ccrs.PlateCarree(), color='k', scale=90, width=1/150)
 ax.colorbar(c3, label='Difference Magnitude (cm/s)', loc='r', shrink=0.9)
 axs.format(abc=True)
+
+axs[0,1].format(title=r"$\bf{IFT\ Mean\ Drift}$" + "\n\nMay")
+axs[0,4].format(title=r"$\bf{NSIDC\ Mean\ Drift}$" + "\n\nMay")
+axs[1,1].format(title=r"$\bf{IFT\ Bin\ Counts}$" + "\n\nMay")
+axs[1,4].format(title=r"$\bf{IFT\ -\ NSIDC\ Difference}$" + "\n\nMay")
+
+
 for imtype in ['png', 'pdf']:
     fig.save('../figures/{im}/fig14_mean_drift.{im}'.format(im=imtype), dpi=300)
 

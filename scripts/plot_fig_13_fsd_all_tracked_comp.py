@@ -51,6 +51,6 @@ ax.text(1020, 0.15, 'CCDF')
 ax.text(1020, 0.00015, 'PDF')
 
 ax.legend(loc='ll', ncols=1)
-ax.format(xlabel='Floe area (km$^2$)', ylabel='Probability')
+ax.format(xlabel='Floe area (km$^2$)', ylabel='Probability', yformatter='log')
 for imtype in ['png', 'pdf']:
     fig.save('../figures/{im}/fig13_all_floes_v_tracked_FSD.{im}'.format(im=imtype), dpi=300)
