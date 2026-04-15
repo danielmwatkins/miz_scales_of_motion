@@ -39,7 +39,6 @@ floe_lib_clean = pd.concat(floe_lib_clean).reset_index()
 trajectories = pd.read_csv('../data/floe_tracker/ift_floe_trajectories.csv', index_col=0)
 trajectories['datetime'] = pd.to_datetime(trajectories['datetime'])
 
-
 data = []
 for year in range(2003, 2021):
     n = len(floe_lib_raw.loc[floe_lib_raw.datetime.dt.year == year])
@@ -84,7 +83,7 @@ for ax in axs[0:3]:
 ax = axs[0, 0]
 data, _, _ = np.histogram2d(floe_lib_clean.x_stere, floe_lib_clean.y_stere, bins=[xbins, ybins])
 data = pd.DataFrame(data, index=xc, columns=yc)
-c = ax.pcolormesh(xc, yc, data.where(data >= 30).T, transform=crs, cmap='spectral_r', vmin=0, vmax=2000, N=20, extend='max')
+c = ax.pcolormesh(xc, yc, data.where(data >= 30).T, transform=crs, cmap='RdYlBu_r', vmin=0, vmax=2000, N=20, extend='max')
 ax.colorbar(c, label='Count', loc='b')
 
 # Middle: Tracked floes (note: this is all floe images that have been linked, not unique floes
@@ -93,7 +92,7 @@ data, _, _ = np.histogram2d(floe_lib_clean.loc[floe_lib_clean.floe_id != 'unmatc
                             floe_lib_clean.loc[floe_lib_clean.floe_id != 'unmatched', 'y_stere'],
                             bins=[xbins, ybins])
 data = pd.DataFrame(data, index=xc, columns=yc)
-c = ax.pcolormesh(xc, yc, data.where(data >= 30).T, transform=crs, cmap='spectral_r', vmin=0, vmax=2000, N=20, extend='max')
+c = ax.pcolormesh(xc, yc, data.where(data >= 30).T, transform=crs, cmap='RdYlBu_r', vmin=0, vmax=2000, N=20, extend='max')
 ax.colorbar(c, label='Count', loc='b')
 
 # Right: Trajectories
@@ -134,7 +133,7 @@ axs.format(abc=True)
 
 # Bottom right: Trajectory lengths
 ax = axs[1, 2]
-c = pplt.Cycle('spectral', 18)
+c = pplt.Cycle('colorblind10', 18)
 colors = {year: c['color'] for c, year in zip(c, np.arange(2003, 2021))}
 h = []
 for year, group in trajectories.groupby(trajectories.datetime.dt.year):
@@ -150,5 +149,5 @@ ax.format(title='Trajectory length distribution', ylabel='Count', xlabel='Length
          ylocator=(1, 1e1, 1e2, 1e3, 1e4), yformatter=['$10^0$', '$10^1$', '$10^2$', '$10^3$', '$10^4$'])
 ax.legend(h[::3], [str(x) for x in range(2003, 2021)][::3], loc='ur', ncols=1, order='F')
 for imtype in ['png', 'pdf']:
-    fig.save('../figures/{im}/fig05_data_availability.{im}'.format(im=imtype)', dpi=300)
+    fig.save('../figures/{im}/fig05_data_availability.{im}'.format(im=imtype), dpi=300)
 
