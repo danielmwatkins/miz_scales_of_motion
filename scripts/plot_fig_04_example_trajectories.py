@@ -58,7 +58,6 @@ for date in plot_dates:
             d=date.strftime('%Y%m%d')))
 
 imdate = pd.to_datetime('2014-04-27 12:38:45')
-# plot_floes = floe_lib_clean.loc[(floe_lib_clean.floe_id != 'unmatched') & (floe_lib_clean.datetime.dt.year == imdate.year)].groupby('floe_id').filter(lambda x: imdate in x.datetime.values)
 
 plot_floes = floe_lib_clean.loc[(floe_lib_clean.floe_id != 'unmatched') & \
     (floe_lib_clean.datetime.dt.year == imdate.year)].groupby('floe_id').filter(
@@ -93,13 +92,6 @@ colors = [c['color'] for c in pplt.Cycle('Dark2', len(floes))]
 
 for ax, date in zip(axs,plot_dates):
     ax.imshow(reshape_as_image(tc_images[date].read()), extent=[left, right, bottom, top])
-    # # Overlay raw floes
-    # ax.imshow(np.ma.masked_array(raw_images[date], (raw_images[date]==0) | (clean_images[date] > 0)),
-    #           color='sky blue', alpha=0.5, extent=[left, right, bottom, top])
-
-    # # Overlay clean floes
-    # ax.imshow(np.ma.masked_array(clean_images[date], clean_images[date]==0),
-    #       color='tangerine', alpha=0.5, extent=[left, right, bottom, top])
 
     image = clean_images[date]
     
@@ -115,13 +107,10 @@ for ax, date in zip(axs,plot_dates):
 
             ax.plot(df_floe.loc[df_floe.index <= date, 'x_stere'].values/1e3 - x0,
                     df_floe.loc[df_floe.index <= date, 'y_stere'].values/1e3 - y0, color=c, marker='.', facecolor='w')
-            # ax.plot(df_floe.loc[date, 'x_stere']/1e3 - x0,
-            #         df_floe.loc[date, 'y_stere']/1e3 - y0, color=c, marker='.')
-            
-    ax.format(ylim=(-100, 100), xlim=(-100, 100), title=date.strftime("%Y-%m-%d %H:%M"), ylabel='Y (km)', xlabel='X (km)')
+
+    ax.format(ylim=(-100, 100), xlim=(-100, 100), title=date.strftime("%d %b %Y %H:%M"), ylabel='Y (km)', xlabel='X (km)')
 axs.format(abc=True)
 
 for imtype in ['png', 'pdf']:
     fig.save('../figures/{im}/fig04_tracked_floes.{im}'.format(im=imtype), dpi=300)
-
 

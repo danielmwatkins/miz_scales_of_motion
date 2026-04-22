@@ -129,7 +129,7 @@ for row, imdate in zip([0, 1], tc_images):
 
     ax.text(inset_left + 0.01, inset_top - 0.03, label[row], color='k', bbox={'facecolor': 'w'})
     
-    datestring = imdate.strftime("%Y-%m-%d")
+    datestring = imdate.strftime("%d %b %Y")
     for col, title in zip([0, 1, 2], ['True Color', 'False Color', 'Processed']):
         axs[row, col].format(title=datestring + " " + title, ylabel='Y ($\\times 10^6$ m)', xlabel='X ($\\times 10^6$ m)')
 
@@ -146,7 +146,7 @@ for ax, date in zip(axs[2,:], man_images):
                   np.linspace(top, bottom, outlines.shape[0]),
                   np.ma.masked_array(outlines, mask=outlines == 0), color='b')
     ax.format(xlim=(inset_left, inset_right), ylim=(inset_bottom, inset_top), xtickminor=False, ytickminor=False, xlocator=0.1, ylocator=0.1,
-              title=date.strftime('%Y-%m-%d'), yreverse=False)
+              title=date.strftime('%d %b %Y'), yreverse=False)
 
 h = [ax.plot([],[], ls=ls, m=m, lw=lw, color=c) for lw, c, ls, m in zip([1, 3, 3], ['b', 'tangerine', 'sky blue'], ['-', '', ''], ['', 's', 's'])]
 axs[2, 0].legend(h, ['Manual', 'IFT floes', 'IFT non-floes'], loc='ul', ncols=1, alpha=1)
