@@ -133,8 +133,8 @@ axs.format(abc=True)
 
 # Bottom right: Trajectory lengths
 ax = axs[1, 2]
-c = pplt.Cycle('colorblind10', 18)
-colors = {year: c['color'] for c, year in zip(c, np.arange(2003, 2021))}
+c = pplt.Cycle('cubehelix_r', 20)
+colors = {year: c['color'] for c, year in zip(c, np.arange(2001, 2021))}
 h = []
 for year, group in trajectories.groupby(trajectories.datetime.dt.year):
     n = group.groupby('floe_id').apply(lambda x: len(x), include_groups=False)

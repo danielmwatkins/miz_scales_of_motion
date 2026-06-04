@@ -27,6 +27,7 @@ df['band_1_reflectance'] = df['tc_channel0']/255
 df['month'] = df.datetime.dt.month
 df['n'] = df.groupby('datetime').transform(lambda x: len(x))['area']
 df['length_scale_km'] = df['area_adj_km']**0.5
+df['nsidc_sic'] = df['nsidc_sic']*100 # Convert to concentration
 
 dr = pd.date_range('2020-04-01', '2020-09-01', freq='1MS')
 
@@ -35,7 +36,7 @@ dr = pd.date_range('2020-04-01', '2020-09-01', freq='1MS')
 fig, axs = pplt.subplots(ncols=4, share=False, nrows=2)
 
 idx = df.n > 30
-idx = idx & df.nsidc_sic.between(0.15, 0.85)
+idx = idx & df.nsidc_sic.between(15, 85)
 idx = idx & df.final_classification
 for col, var, ylims in zip([0, 1, 2, 3],
                           ['length_scale_km', 'circularity', 'band_1_reflectance', 'nsidc_sic'],
@@ -56,11 +57,11 @@ for col, var, ylims in zip([0, 1, 2, 3],
               xlabel='', fontsize=12, ylim=ylims)
 
 idx = df.n > 30
-idx = idx & df.nsidc_sic.between(0.85, 1)
+idx = idx & df.nsidc_sic.between(85, 100)
 idx = idx & df.final_classification
 for col, var, ylims in zip([0, 1, 2, 3],
                           ['length_scale_km', 'circularity', 'band_1_reflectance', 'nsidc_sic'],
-                          [(4, 20), (0.2, 1), (0.5, 1), (0, 1)]):
+                          [(4, 20), (0.2, 1), (0.5, 1), (0, 100)]):
     ax = axs[0,col]
     n = df.loc[idx, [var, 'doy']].groupby('doy').count()
     med = df.loc[idx, [var, 'doy']].groupby('doy').median().where(n > 500)
@@ -83,7 +84,7 @@ for col, var, ylims in zip([0, 1, 2, 3],
 axs[0,0].format(ylabel='Length scale (km)', title='Floe Size')
 axs[0,1].format(ylabel='Circularity', title='Floe Shape')
 axs[0,2].format(ylabel='Band 1 Reflectance', title='Floe Reflectance')
-axs[0,3].format(ylabel='Ice Fraction', title='CDR Sea Ice Fraction')
+axs[0,3].format(ylabel='Sea Ice Concentration (%)', title='Sea Ice Concentration')
 
 # axs[0,2].legend(ncols=1, loc='ll')
 
@@ -99,7 +100,7 @@ idx = idx & df.edge_dist_km.between(0, 100) & (df.coast_dist_km > 100)
 idx = idx & df.final_classification
 for col, var, ylims in zip([0, 1, 2, 3],
                           ['length_scale_km', 'circularity', 'band_1_reflectance', 'nsidc_sic'],
-                          [(4, 20), (0.2, 1), (0.5, 1), (0, 1)]):
+                          [(4, 20), (0.2, 1), (0.5, 1), (0, 100)]):
     # shade data
     ax = axs[1, col]
     n = df.loc[idx, [var, 'doy']].groupby('doy').count()
@@ -120,7 +121,7 @@ idx = idx & df.coast_dist_km.between(0, 100) & (df.edge_dist_km > 100)
 idx = idx & df.final_classification
 for col, var, ylims in zip([0, 1, 2, 3],
                           ['length_scale_km', 'circularity', 'band_1_reflectance', 'nsidc_sic'],
-                          [(4, 20), (0.2, 1), (0.5, 1), (0, 1)]):
+                          [(4, 20), (0.2, 1), (0.5, 1), (0, 100)]):
     ax = axs[1, col]
     n = df.loc[idx, [var, 'doy']].groupby('doy').count()
     med = df.loc[idx, [var, 'doy']].groupby('doy').median().where(n > 500)
@@ -142,7 +143,7 @@ for col, var, ylims in zip([0, 1, 2, 3],
 axs[1, 0].format(ylabel='Length scale (km)', title='Floe Size')
 axs[1, 1].format(ylabel='Circularity', title='Floe Shape')
 axs[1, 2].format(ylabel='Band 1 Reflectance', title='Floe Reflectance')
-axs[1, 3].format(ylabel='Ice Fraction', title='CDR Sea Ice Fraction')
+axs[1, 3].format(ylabel='Sea Ice Concentration (%)', title='Sea Ice Concentration')
 # axs[1, 2].legend(ncols=1, loc='ll')
 axs.format(abc=True)
 

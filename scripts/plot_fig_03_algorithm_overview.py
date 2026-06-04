@@ -75,7 +75,8 @@ for date in plot_dates:
         '../data/validation_images/{d}/{d}.aqua.labeled_manual.png'.format(
             d=date.strftime('%Y%m%d')))[:,:,0]
 
-
+landmask = (skimage.io.imread('../data/modis_images/landmask.tiff')[:,:, 0] > 0).astype(int)
+landmask_outlines = landmask  - skimage.morphology.erosion(landmask, skimage.morphology.disk(4))
 # imdate = pd.to_datetime('2014-05-01 12:14:19')
 # overlap_floes = floe_lib_clean.loc[(floe_lib_clean.datetime.dt.year == 2014) & \
 #     (floe_lib_clean.floe_id != 'unmatched')].groupby('floe_id').filter(
@@ -105,6 +106,10 @@ label = ['g.', 'h.']
 for row, imdate in zip([0, 1], tc_images):
     for ax, image in zip([axs[row, 0], axs[row, 1]], [tc_images[imdate], fc_images[imdate]]):
         ax.imshow(reshape_as_image(image), extent=[left, right, bottom, top])
+        # Overlay coastline
+        ax.pcolorfast(np.linspace(left, right, landmask_outlines.shape[1]),
+                      np.linspace(top, bottom, landmask_outlines.shape[0]),
+                      np.ma.masked_array(landmask_outlines, mask=landmask_outlines == 0), color='k', zorder=10)        
         ax.format(ylim=(-2, -1.5), xlim=(0.6, 1.1)) # compare with fig 3?
     ax = axs[row, 2]
     ax.imshow(reshape_as_image(proc_images[imdate]), cmap='mono_r', vmin=0, vmax=255, extent=[left, right, bottom, top])
@@ -117,6 +122,8 @@ for row, imdate in zip([0, 1], tc_images):
     ax.imshow(np.ma.masked_array(ift_clean[imdate], ift_clean[imdate]==0),
           color='tangerine', alpha=1, extent=[left, right, bottom, top])
 
+
+    
     h = [ax.plot([],[], color=c, alpha=a, lw=0, marker='s') 
          for c, a in zip(['sky blue', 'tangerine', 'k'], [0.5, 1, 1])]
     ax.legend(h, ['Non-floes', 'Floes', 'Masked'], loc='ll', ncols=1, alpha=1)  
@@ -145,6 +152,12 @@ for ax, date in zip(axs[2,:], man_images):
     ax.pcolorfast(np.linspace(left, right, outlines.shape[1]),
                   np.linspace(top, bottom, outlines.shape[0]),
                   np.ma.masked_array(outlines, mask=outlines == 0), color='b')
+    
+    # Overlay coastline
+    ax.pcolorfast(np.linspace(left, right, landmask_outlines.shape[1]),
+                  np.linspace(top, bottom, landmask_outlines.shape[0]),
+                  np.ma.masked_array(landmask_outlines, mask=landmask_outlines == 0), color='k', zorder=10)
+
     ax.format(xlim=(inset_left, inset_right), ylim=(inset_bottom, inset_top), xtickminor=False, ytickminor=False, xlocator=0.1, ylocator=0.1,
               title=date.strftime('%Y-%m-%d'), yreverse=False)
 
